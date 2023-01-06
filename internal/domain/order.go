@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type OrderStatus int
 
@@ -11,11 +15,11 @@ const (
 )
 
 type Order struct {
-	ID          string      `json:"id"`
-	ProductId   string      `json:"product_id"`
-	User        User        `json:"user"`
-	Mobile      string      `json:"mobile"`
-	OrderStatus OrderStatus `json:"order_status"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdatedAt   time.Time   `json:"updated_at"`
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ProductId   string             `json:"product_id"`
+	User        User               `json:"user"`
+	Mobile      string             `json:"mobile"`
+	OrderStatus OrderStatus        `json:"order_status"`
+	CreatedAt   time.Time          `json:"created_at"`
+	UpdatedAt   time.Time          `json:"updated_at"`
 }

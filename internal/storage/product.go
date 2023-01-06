@@ -9,6 +9,11 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
+// FindLastIndex implements repository.CrawlThreadsRepository
+func (*productRepo) FindLastIndex() int {
+	panic("unimplemented")
+}
+
 func (repo *productRepo) Create() {
 	// ...
 }
