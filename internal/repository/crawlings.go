@@ -12,4 +12,8 @@ type CrawlKeywordsRepository interface {
 	FindLiveKeywords() ([]*domain.CrawlKeyword, error)
 }
 
-type CrawlProductsRepository interface{}
+type CrawlProductsRepository interface {
+	Insert(*domain.CrawlProduct) (*domain.CrawlProduct, error)
+	Update(*domain.CrawlProduct) (*domain.CrawlProduct, error)
+	List(filter *domain.CrawlProductFilter, offset, limit int) ([]*domain.CrawlProduct, int, error)
+}

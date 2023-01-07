@@ -33,6 +33,11 @@ type CrawlKeyword struct {
 	UpdatedAt       time.Time          `json:"updated_at"`
 }
 
+type CrawlProductFilter struct {
+	Keyword string
+	Status  DanggnStatus
+}
+
 type CrawlProduct struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	DanggnIndex string             `json:"danggn_index"`

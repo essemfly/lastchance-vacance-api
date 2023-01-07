@@ -14,6 +14,11 @@ const (
 	ProductStatusReservated
 )
 
+type ProductFilter struct {
+	Status        ProductStatus
+	SearchKeyword string
+}
+
 type Product struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name            string             `json:"name"`

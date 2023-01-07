@@ -7,6 +7,7 @@ import (
 	"github.com/1000king/handover/internal/domain"
 	"github.com/1000king/handover/internal/repository"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
@@ -113,8 +114,68 @@ type crawlProductRepo struct {
 	col *mongo.Collection
 }
 
+// List implements repository.CrawlProductsRepository
+func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, limit int) ([]*domain.CrawlProduct, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	options := options.Find()
+	options.SetSort(bson.D{{Key: "_id", Value: 1}})
+	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
+
+	mongoFilter := bson.M{}
+
+	totalCount, _ := repo.col.CountDocuments(ctx, mongoFilter)
+	cursor, err := repo.col.Find(ctx, mongoFilter, options)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var pds []*domain.CrawlProduct
+	err = cursor.All(ctx, &pds)
+	if err != nil {
+		return nil, 0, err
+	}
+	return pds, int(totalCount), nil
+}
+
+// Insert implements repository.CrawlProductsRepository
+func (repo *crawlProductRepo) Insert(pd *domain.CrawlProduct) (*domain.CrawlProduct, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	result, err := repo.col.InsertOne(ctx, pd)
+	if err != nil {
+		return nil, err
+	}
+
+	pd.ID = result.InsertedID.(primitive.ObjectID)
+
+	return pd, nil
+}
+
+// Update implements repository.CrawlProductsRepository
+func (repo *crawlProductRepo) Update(pd *domain.CrawlProduct) (*domain.CrawlProduct, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"_id": pd.ID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &pd}, opts); err != nil {
+		return nil, err
+	}
+
+	var updatedProduct *domain.CrawlProduct
+	if err := repo.col.FindOne(ctx, filter).Decode(&updatedProduct); err != nil {
+		return nil, err
+	}
+
+	return updatedProduct, nil
+}
+
 func MongoCrawlProductsRepo(conn *MongoDB) repository.CrawlProductsRepository {
-	return &productRepo{
+	return &crawlProductRepo{
 		col: conn.crawlProductCol,
 	}
 }
