@@ -39,17 +39,21 @@ type CrawlProductFilter struct {
 }
 
 type CrawlProduct struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	DanggnIndex string             `json:"danggn_index"`
-	Keyword     string             `json:"keyword"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Price       int                `json:"price"`
-	Images      []string           `json:"images"`
-	Status      DanggnStatus       `json:"status"`
-	Url         string             `json:"url"`
-	ViewCounts  int                `json:"view_counts"` // 현재는 당근에서 가져오는 것
-	LikeCounts  int                `json:"like_counts"`
-	CreatedAt   time.Time          `json:"created_at"`
-	UpdatedAt   time.Time          `json:"updated_at"`
+	ID                primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	DanggnIndex       string             `json:"danggn_index"`
+	Keyword           string             `json:"keyword"`
+	Name              string             `json:"name"`
+	Description       string             `json:"description"`
+	Price             int                `json:"price"`
+	Images            []string           `json:"images"`
+	Status            DanggnStatus       `json:"status"`
+	Url               string             `json:"url"`
+	ViewCounts        int                `json:"view_counts"`
+	LikeCounts        int                `json:"like_counts"`
+	CrawlCategory     string             `json:"crawl_category"`
+	SellerNickName    string             `json:"seller_nickname"`
+	SellerRegionName  string             `json:"seller_region_name"`
+	SellerTemperature string             `json:"seller_temperature"`
+	CreatedAt         time.Time          `json:"created_at"`
+	UpdatedAt         time.Time          `json:"updated_at"`
 }
