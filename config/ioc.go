@@ -40,11 +40,13 @@ func registerProdEnv() {
 }
 
 func registerTestEnv() {
-	Repo.Products = nil
+	mongoconn := storage.NewMongoDB()
+	registerRepos(mongoconn)
 }
 
 func registerLocalEnv() {
-	Repo.Products = nil
+	mongoconn := storage.NewMongoDB()
+	registerRepos(mongoconn)
 }
 
 func registerRepos(conn *storage.MongoDB) {

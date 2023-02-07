@@ -4,7 +4,7 @@ import "github.com/1000king/handover/internal/domain"
 
 type CrawlThreadsRepository interface {
 	FindLastIndex() (int, error)
-	InsertThread(startIndex, lastIndex int) error
+	InsertThread(*domain.CrawlThread) error
 }
 
 type CrawlKeywordsRepository interface {

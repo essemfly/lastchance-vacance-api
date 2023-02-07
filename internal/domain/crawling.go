@@ -15,12 +15,13 @@ const (
 )
 
 type CrawlThread struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	StartIndex int                `json:"start_index"`
-	LastIndex  int                `json:"last_index"`
-	Keywords   []string           `json:"keywords"`
-	CreatedAt  time.Time          `json:"created_at"`
-	UpdatedAt  time.Time          `json:"updated_at"`
+	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	StartIndex         int                `json:"start_index"`
+	LastIndex          int                `json:"last_index"`
+	Keywords           []string           `json:"keywords"`
+	NumCrawledProducts int                `json:"num_crawled_products"`
+	CreatedAt          time.Time          `json:"created_at"`
+	UpdatedAt          time.Time          `json:"updated_at"`
 }
 
 type CrawlKeyword struct {

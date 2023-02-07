@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -15,18 +16,54 @@ const (
 )
 
 func IsIndexExists(index int) bool {
+	_, err := crawlPage(index)
+	// Check two times, since the first time may fail due to the server's response.
+	if err != nil {
+		rand.Seed(time.Now().UnixNano())
+		n := rand.Intn(11)
+		_, err = crawlPage(index + n)
+		if err != nil {
+			return false
+		}
+	}
+
 	return true
 }
 
-func crawlDanggnIndex(startIndex, lastIndex int) {
-	_, err := config.Repo.CrawlKeywords.FindLiveKeywords()
-	if err != nil {
-		config.Logger.Error("failed to find live keywords", zap.Error(err))
+func crawlDanggnIndex(keywords []*domain.CrawlKeyword, startIndex, lastIndex int) {
+	numMatchedProducts := 0
+	for i := startIndex; i <= lastIndex; i++ {
+		newProduct, err := crawlPage(i)
+		if err != nil {
+			config.Logger.Error("failed to crawl page", zap.Error(err))
+			continue
+		}
+
+		if !basicClassifier(newProduct, keywords) {
+			continue
+		}
+
+		config.Repo.CrawlProducts.Insert(newProduct)
+		numMatchedProducts += 1
 	}
 
+	keywordsStr := make([]string, 0)
+	for _, keyword := range keywords {
+		keywordsStr = append(keywordsStr, keyword.Keyword)
+	}
+
+	newThreadResult := &domain.CrawlThread{
+		StartIndex:         startIndex,
+		LastIndex:          lastIndex,
+		Keywords:           keywordsStr,
+		NumCrawledProducts: numMatchedProducts,
+		CreatedAt:          time.Now(),
+		UpdatedAt:          time.Now(),
+	}
+	config.Repo.CrawlThreads.InsertThread(newThreadResult)
 }
 
-func crawlPage(index int) {
+func crawlPage(index int) (*domain.CrawlProduct, error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.daangn.com"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -42,6 +79,13 @@ func crawlPage(index int) {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
+
+	c.OnHTML("#article-images", func(e *colly.HTMLElement) {
+		e.ForEach("img", func(_ int, e *colly.HTMLElement) {
+			imageUrl := e.Attr("src")
+			newProduct.Images = append(newProduct.Images, imageUrl)
+		})
+	})
 
 	c.OnHTML("#article-profile", func(e *colly.HTMLElement) {
 		nickName := e.ChildText("nickname")
@@ -72,6 +116,13 @@ func crawlPage(index int) {
 
 	err := c.Visit(url)
 	if err != nil {
-		config.Logger.Error("error occurred in crawl afound ", zap.Error(err))
+		config.Logger.Error("error occurred in crawlling ", zap.Error(err))
+		return nil, err
 	}
+
+	return &newProduct, nil
+}
+
+func basicClassifier(product *domain.CrawlProduct, keywords []*domain.CrawlKeyword) bool {
+	return true
 }

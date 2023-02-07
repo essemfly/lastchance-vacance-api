@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"github.com/1000king/handover/cmd"
+	"github.com/1000king/handover/pkg/crawler"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	cmd.InitBase()
+	crawler.DanggnCrawler()
 }

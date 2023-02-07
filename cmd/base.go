@@ -1,6 +1,8 @@
 package cmd
 
-import "github.com/1000king/handover/config"
+import (
+	"github.com/1000king/handover/config"
+)
 
 func InitBase() {
 	config.InitLogger()

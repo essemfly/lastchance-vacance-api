@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type MongoDB struct {
@@ -28,11 +27,18 @@ func NewMongoDB() *MongoDB {
 
 	mongoClient, err := makeMongoClient(ctx)
 	checkErr(err, "Connection in mongodb")
-	checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
+	// checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
 	db := mongoClient.Database(viper.GetString("MONGO_DB_NAME"))
 
 	return &MongoDB{
-		productCol: db.Collection("products"),
+		productCol:      db.Collection("products"),
+		crawlThreadCol:  db.Collection("crawl_threads"),
+		crawlKeywordCol: db.Collection("crawl_keywords"),
+		crawlProductCol: db.Collection("crawl_products"),
+		userCol:         db.Collection("users"),
+		userLikeCol:     db.Collection("user_likes"),
+		orderCol:        db.Collection("orders"),
+		notificationCol: db.Collection("notifications"),
 	}
 }
 

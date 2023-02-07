@@ -17,20 +17,11 @@ type crawlThreadRepo struct {
 	col *mongo.Collection
 }
 
-func (repo *crawlThreadRepo) InsertThread(startIndex int, lastIndex int) error {
+func (repo *crawlThreadRepo) InsertThread(newThread *domain.CrawlThread) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	now := time.Now()
-
-	result := domain.CrawlThread{
-		StartIndex: startIndex,
-		LastIndex:  lastIndex,
-		CreatedAt:  now,
-		UpdatedAt:  now,
-	}
-
-	_, err := repo.col.InsertOne(ctx, &result)
+	_, err := repo.col.InsertOne(ctx, newThread)
 	if err != nil {
 		zap.Error(err)
 		return err
