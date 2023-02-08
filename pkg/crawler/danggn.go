@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"log"
-	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -17,21 +16,6 @@ import (
 const (
 	ProductURL = "https://www.daangn.com/articles/"
 )
-
-func IsIndexExists(index int) bool {
-	_, err := crawlPage(index)
-	// Check two times, since the first time may fail due to the server's response.
-	if err != nil {
-		rand.Seed(time.Now().UnixNano())
-		n := rand.Intn(11)
-		_, err = crawlPage(index + n)
-		if err != nil {
-			return false
-		}
-	}
-
-	return true
-}
 
 func crawlDanggnIndex(keywords []*domain.CrawlKeyword, startIndex, lastIndex int) {
 	// config.Logger.Info("start crawling danggn index", zap.Int("startIndex", startIndex), zap.Int("lastIndex", lastIndex))
@@ -49,7 +33,7 @@ func crawlDanggnIndex(keywords []*domain.CrawlKeyword, startIndex, lastIndex int
 			continue
 		}
 
-		pds := addKeywords(newProduct, keywords)
+		pds := addProductKeywords(newProduct, keywords)
 		if len(pds) == 0 {
 			continue
 		}
@@ -153,7 +137,7 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 	return &newProduct, nil
 }
 
-func addKeywords(product *domain.CrawlProduct, keywords []*domain.CrawlKeyword) []*domain.CrawlProduct {
+func addProductKeywords(product *domain.CrawlProduct, keywords []*domain.CrawlKeyword) []*domain.CrawlProduct {
 	pds := []*domain.CrawlProduct{}
 	for _, keyword := range keywords {
 		if strings.Contains(product.Name, keyword.Keyword) {

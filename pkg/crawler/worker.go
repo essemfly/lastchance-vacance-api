@@ -2,7 +2,9 @@ package crawler
 
 import (
 	"log"
+	"math/rand"
 	"sync"
+	"time"
 
 	"github.com/1000king/handover/config"
 	"go.uber.org/zap"
@@ -18,7 +20,7 @@ func DanggnCrawler() {
 	var wg sync.WaitGroup
 
 	lastIndex := getLastIndex()
-	for IsIndexExists(lastIndex + chunkSize) {
+	for isIndexExists(lastIndex + chunkSize) {
 		startIndex := lastIndex + 1
 		lastIndex = startIndex + chunkSize - 1
 
@@ -43,4 +45,22 @@ func getLastIndex() int {
 		return GlobalStartIndex
 	}
 	return lastIndex
+}
+
+func isIndexExists(index int) bool {
+	_, err := crawlPage(index)
+	errCounts := 0
+
+	for err != nil {
+		errCounts += 1
+		if errCounts > 5 {
+			return false
+		}
+
+		rand.Seed(time.Now().UnixNano())
+		n := rand.Intn(11)
+		_, err = crawlPage(index + n)
+	}
+
+	return true
 }
