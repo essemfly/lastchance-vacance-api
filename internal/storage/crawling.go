@@ -60,7 +60,7 @@ func (repo *crawlKeywordRepo) FindLiveKeywords() ([]*domain.CrawlKeyword, error)
 	defer cancel()
 
 	var result []*domain.CrawlKeyword
-	cursor, err := repo.col.Find(ctx, bson.M{"is_alive": true})
+	cursor, err := repo.col.Find(ctx, bson.M{"isalive": true})
 	if err != nil {
 		return nil, err
 	}

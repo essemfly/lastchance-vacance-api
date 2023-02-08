@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/spf13/viper"
@@ -43,17 +44,29 @@ func NewMongoDB() *MongoDB {
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://" + viper.GetString("MONGO_URL") + "/" + viper.GetString("MONGO_DB_NAME") + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false").SetAuth(options.Credential{
-		Username: viper.GetString("MONGO_USERNAME"),
-		Password: viper.GetString("MONGO_PASSWORD"),
-	})
-	mongoClient, err := mongo.Connect(ctx, clientOptions)
+	// mongoUri := "mongodb://" + viper.GetString("MONGO_URL") + "/" + viper.GetString("MONGO_DB_NAME") + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 
+	// clientOptions := options.Client().ApplyURI(mongoUri).SetAuth(options.Credential{
+	// 	Username: viper.GetString("MONGO_USERNAME"),
+	// 	Password: viper.GetString("MONGO_PASSWORD"),
+	// })
+	// mongoClient, err := mongo.Connect(ctx, clientOptions)
+
+	localUri := "mongodb://" + viper.GetString("MONGO_USERNAME") + ":" + viper.GetString("MONGO_PASSWORD") + "@localhost:27017"
+	clientOptions := options.Client().ApplyURI(localUri)
+
+	// Connect to MongoDB
+	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Println("hoit1")
+		fmt.Println("Error occured: " + err.Error())
+	}
 	return mongoClient, err
 }
 
 func checkErr(err error, location string) {
 	if err != nil {
+		log.Println("hoit2")
 		fmt.Println("Error occured: " + location)
 		fmt.Println("Message: " + err.Error())
 	}

@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
@@ -18,19 +19,22 @@ func ParsePriceString(letter string) int {
 }
 
 // "관심 8 ∙채팅 2∙조회 158"
-func ParseViewCountsString(letter string) (int, int) {
-	likeCount, viewCount := 0, 0
-	tokens := strings.Split(letter, "")
+func ParseViewCountsString(letter string) (int, int, int) {
+	likeCount, viewCount, chatCount := 0, 0, 0
+	letter = strings.Replace(letter, " ", "", -1)
+	letter = strings.Replace(letter, "\t", "", -1)
+	letter = strings.Replace(letter, "\n", "", -1)
+	tokens := strings.Split(letter, "∙")
+	re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
+
 	for _, token := range tokens {
-		tokenKeyPair := strings.Split(token, " ")
-		if len(tokenKeyPair) < 2 {
-			continue
-		}
-		if tokenKeyPair[0] == "관심" {
-			likeCount, _ = strconv.Atoi(tokenKeyPair[1])
-		} else if tokenKeyPair[0] == "조회" {
-			viewCount, _ = strconv.Atoi(tokenKeyPair[1])
+		if strings.Contains(token, "관심") {
+			likeCount, _ = strconv.Atoi(re.FindString(token))
+		} else if strings.Contains(token, "조회") {
+			viewCount, _ = strconv.Atoi(re.FindString(token))
+		} else if strings.Contains(token, "채팅") {
+			chatCount, _ = strconv.Atoi(re.FindString(token))
 		}
 	}
-	return likeCount, viewCount
+	return likeCount, viewCount, chatCount
 }

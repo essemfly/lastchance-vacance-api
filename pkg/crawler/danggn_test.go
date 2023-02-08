@@ -1,0 +1,43 @@
+package crawler
+
+import (
+	"testing"
+
+	"github.com/1000king/handover/cmd"
+	"github.com/1000king/handover/internal/domain"
+)
+
+func TestCrawlPage(t *testing.T) {
+	cmd.InitBase()
+
+	hideIdx := 530520001
+	soldoutIdx := 519218848
+	saleIdx := 362459007
+	removedIdx := 362459009
+
+	_, err := crawlPage(hideIdx)
+	if err == nil {
+		t.Errorf("hide product should emit error")
+	}
+
+	soldoutPd, err := crawlPage(soldoutIdx)
+	if err != nil {
+		t.Errorf("soldout product should not emit error")
+	}
+	if soldoutPd.Status != domain.DANGGN_STATUS_SOLDOUT {
+		t.Errorf("soldout product should be soldout status")
+	}
+
+	salePd, err := crawlPage(saleIdx)
+	if err != nil {
+		t.Errorf("sale product should not emit error")
+	}
+	if salePd.Status != domain.DANGGN_STATUS_SALE {
+		t.Errorf("sale product should be sale status")
+	}
+
+	_, err = crawlPage(removedIdx)
+	if err == nil {
+		t.Errorf("removed product should emit error")
+	}
+}

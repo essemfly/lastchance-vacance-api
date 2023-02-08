@@ -6,12 +6,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type DanggnStatus int
+type DanggnStatus string
 
 const (
-	SALE DanggnStatus = iota
-	CLOSE
-	HIDE
+	DANGGN_STATUS_SALE    DanggnStatus = "SALE"
+	DANGGN_STATUS_SOLDOUT DanggnStatus = "SOLDOUT"
+	DANGGN_STATUS_UNKNOWN DanggnStatus = "UNKNOWN"
 )
 
 type CrawlThread struct {
@@ -51,6 +51,7 @@ type CrawlProduct struct {
 	Url               string             `json:"url"`
 	ViewCounts        int                `json:"view_counts"`
 	LikeCounts        int                `json:"like_counts"`
+	ChatCounts        int                `json:"chat_counts"`
 	CrawlCategory     string             `json:"crawl_category"`
 	SellerNickName    string             `json:"seller_nickname"`
 	SellerRegionName  string             `json:"seller_region_name"`
