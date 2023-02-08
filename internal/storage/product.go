@@ -16,6 +16,27 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
+func (repo *productRepo) ListByCrawlID(crawlID primitive.ObjectID) ([]*domain.Product, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	mongoFilter := bson.M{
+		"craulid": crawlID,
+	}
+
+	cursor, err := repo.col.Find(ctx, mongoFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	var pds []*domain.Product
+	err = cursor.All(ctx, &pds)
+	if err != nil {
+		return nil, err
+	}
+	return pds, nil
+}
+
 func (repo *productRepo) List(filter *domain.ProductFilter, offset, limit int) ([]*domain.Product, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -60,6 +81,7 @@ func (repo *productRepo) Update(pd *domain.Product) (*domain.Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
 
+	pd.UpdatedAt = time.Now()
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": pd.ID}
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &pd}, opts); err != nil {

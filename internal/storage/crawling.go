@@ -151,6 +151,7 @@ func (repo *crawlProductRepo) Update(pd *domain.CrawlProduct) (*domain.CrawlProd
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
 
+	pd.UpdatedAt = time.Now()
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": pd.ID}
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &pd}, opts); err != nil {

@@ -6,12 +6,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ProductStatus int
+type ProductStatus string
 
 const (
-	ProductStatusSoldout ProductStatus = iota
-	ProductStatusInSale
-	ProductStatusReservated
+	PRODUCT_STATUS_SOLDOUT ProductStatus = "SOLDOUT"
+	PRODUCT_STATUS_SALE    ProductStatus = "SALE"
+	PRODUCT_STATUS_UNKNOWN ProductStatus = "UNKNOWN"
 )
 
 type ProductFilter struct {
@@ -21,6 +21,7 @@ type ProductFilter struct {
 
 type Product struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	CrawlProductID  primitive.ObjectID `json:"crawl_product_id"`
 	Name            string             `json:"name"`
 	Description     string             `json:"description"`
 	Images          []string           `json:"images"`
