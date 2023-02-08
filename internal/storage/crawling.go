@@ -110,7 +110,22 @@ type crawlProductRepo struct {
 	col *mongo.Collection
 }
 
-// List implements repository.CrawlProductsRepository
+func (repo *crawlProductRepo) Get(ID primitive.ObjectID) (*domain.CrawlProduct, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	mongoFilter := bson.M{
+		"_id": ID,
+	}
+
+	var pd *domain.CrawlProduct
+
+	if err := repo.col.FindOne(ctx, mongoFilter).Decode(&pd); err != nil {
+		return nil, err
+	}
+	return pd, nil
+}
+
 func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, limit int) ([]*domain.CrawlProduct, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

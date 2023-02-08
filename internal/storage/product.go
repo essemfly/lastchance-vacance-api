@@ -16,6 +16,22 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
+func (repo *productRepo) Get(ID primitive.ObjectID) (*domain.Product, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	mongoFilter := bson.M{
+		"_id": ID,
+	}
+
+	var pd *domain.Product
+
+	if err := repo.col.FindOne(ctx, mongoFilter).Decode(&pd); err != nil {
+		return nil, err
+	}
+	return pd, nil
+}
+
 func (repo *productRepo) ListByCrawlID(crawlID primitive.ObjectID) ([]*domain.Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
