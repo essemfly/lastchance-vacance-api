@@ -14,6 +14,13 @@ const (
 	PRODUCT_STATUS_UNKNOWN ProductStatus = "UNKNOWN"
 )
 
+type ProductType string
+
+const (
+	PRODUCT_TYPE_DANGGN ProductType = "DANGGN"
+	PRODUCT_TYPE_DIRECT ProductType = "DIRECT"
+)
+
 type ProductFilter struct {
 	Status        ProductStatus
 	SearchKeyword string
@@ -23,6 +30,7 @@ type Product struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	CrawlProductID  primitive.ObjectID `json:"crawl_product_id"`
 	Name            string             `json:"name"`
+	UploadType      ProductType        `json:"upload_type"`
 	Description     string             `json:"description"`
 	Images          []string           `json:"images"`
 	Status          ProductStatus      `json:"status"`
@@ -31,11 +39,8 @@ type Product struct {
 	Outlink         string             `json:"outlink"`
 	ViewCounts      int                `json:"view_counts"` // 현재는 당근에서 가져오는 것
 	LikeCounts      int                `json:"like_counts"` // 현재는 당근에서 가져오는 것
+	ChatCounts      int                `json:"chat_counts"` // 현재는 당근에서 가져오는 것
 	CreatedAt       time.Time          `json:"created_at"`
 	UpdatedAt       time.Time          `json:"updated_at"`
-
-	// Seller
-	// Category
-	// Place
-	// ViewCounts + LikeCounts => 따로 collections 만들 예정
+	DeletedAt       time.Time          `json:"deleted_at"`
 }

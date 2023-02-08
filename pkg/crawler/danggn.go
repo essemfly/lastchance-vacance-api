@@ -17,7 +17,7 @@ const (
 	ProductURL = "https://www.daangn.com/articles/"
 )
 
-func crawlDanggnIndex(keywords []*domain.CrawlKeyword, startIndex, lastIndex int) {
+func crawlDanggnIndex(worker chan bool, done chan bool, keywords []*domain.CrawlKeyword, startIndex, lastIndex int) {
 	// config.Logger.Info("start crawling danggn index", zap.Int("startIndex", startIndex), zap.Int("lastIndex", lastIndex))
 	log.Println("start crawling danggn index", zap.Int("startIndex", startIndex), zap.Int("lastIndex", lastIndex))
 	numMatchedProducts := 0
@@ -54,10 +54,10 @@ func crawlDanggnIndex(keywords []*domain.CrawlKeyword, startIndex, lastIndex int
 		LastIndex:          lastIndex,
 		Keywords:           keywordsStr,
 		NumCrawledProducts: numMatchedProducts,
-		CreatedAt:          time.Now(),
-		UpdatedAt:          time.Now(),
 	}
 	config.Repo.CrawlThreads.InsertThread(newThreadResult)
+	<-worker
+	done <- true
 }
 
 func crawlPage(index int) (*domain.CrawlProduct, error) {
@@ -78,8 +78,6 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 		ID:          primitive.NewObjectID(),
 		DanggnIndex: indexStr,
 		Url:         url,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	c.OnHTML("head", func(e *colly.HTMLElement) {

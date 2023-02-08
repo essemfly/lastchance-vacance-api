@@ -3,7 +3,6 @@ package crawler
 import (
 	"log"
 	"math/rand"
-	"sync"
 	"time"
 
 	"github.com/1000king/handover/config"
@@ -17,7 +16,13 @@ const (
 )
 
 func DanggnCrawler() {
-	var wg sync.WaitGroup
+
+	workers := make(chan bool, numWorkers)
+	done := make(chan bool, numWorkers)
+
+	for c := 0; c < numWorkers; c++ {
+		done <- true
+	}
 
 	lastIndex := getLastIndex()
 	for isIndexExists(lastIndex + chunkSize) {
@@ -30,13 +35,17 @@ func DanggnCrawler() {
 			log.Fatalln("failed to find live keywords", zap.Error(err))
 			return
 		}
-		wg.Add(1)
+
+		workers <- true
+		<-done
 		go func() {
-			defer wg.Done()
-			crawlDanggnIndex(keywords, startIndex, lastIndex)
+			crawlDanggnIndex(workers, done, keywords, startIndex, lastIndex)
 		}()
 	}
-	wg.Wait()
+
+	for c := 0; c < numWorkers; c++ {
+		<-done
+	}
 }
 
 func getLastIndex() int {

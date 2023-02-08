@@ -62,17 +62,19 @@ func (repo *productRepo) List(filter *domain.ProductFilter, offset, limit int) (
 	return pds, int(totalCount), nil
 }
 
-// Insert implements repository.ProductsRepository
 func (repo *productRepo) Insert(pd *domain.Product) (*domain.Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	result, err := repo.col.InsertOne(ctx, pd)
-	if err != nil {
+	pd.ID = primitive.NewObjectID()
+	pd.CreatedAt = time.Now()
+	pd.UpdatedAt = time.Now()
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"crawlproductid": pd.CrawlProductID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": pd}, opts); err != nil {
 		return nil, err
 	}
-
-	pd.ID = result.InsertedID.(primitive.ObjectID)
 
 	return pd, nil
 }
@@ -94,6 +96,17 @@ func (repo *productRepo) Update(pd *domain.Product) (*domain.Product, error) {
 	}
 
 	return updatedProduct, nil
+}
+
+func (repo *productRepo) Remove(productID primitive.ObjectID) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": productID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": bson.M{"deletedat": time.Now()}}); err != nil {
+		return err
+	}
+	return nil
 }
 
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {

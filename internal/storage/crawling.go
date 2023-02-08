@@ -21,6 +21,10 @@ func (repo *crawlThreadRepo) InsertThread(newThread *domain.CrawlThread) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	newThread.ID = primitive.NewObjectID()
+	newThread.CreatedAt = time.Now()
+	newThread.UpdatedAt = time.Now()
+
 	_, err := repo.col.InsertOne(ctx, newThread)
 	if err != nil {
 		zap.Error(err)
@@ -80,6 +84,7 @@ func (repo *crawlKeywordRepo) InsertKeyword(keyword string, registeredIndex int)
 	now := time.Now()
 
 	result := domain.CrawlKeyword{
+		ID:              primitive.NewObjectID(),
 		Keyword:         keyword,
 		IsAlive:         true,
 		RegisteredIndex: registeredIndex,
@@ -131,17 +136,19 @@ func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, li
 	return pds, int(totalCount), nil
 }
 
-// Insert implements repository.CrawlProductsRepository
 func (repo *crawlProductRepo) Insert(pd *domain.CrawlProduct) (*domain.CrawlProduct, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	result, err := repo.col.InsertOne(ctx, pd)
-	if err != nil {
+	pd.ID = primitive.NewObjectID()
+	pd.CreatedAt = time.Now()
+	pd.UpdatedAt = time.Now()
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"danggnindex": pd.DanggnIndex}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": pd}, opts); err != nil {
 		return nil, err
 	}
-
-	pd.ID = result.InsertedID.(primitive.ObjectID)
 
 	return pd, nil
 }
