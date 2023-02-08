@@ -11,20 +11,43 @@ import (
 )
 
 func AddKeywordSeed(startIndex int) {
-	keyword := domain.CrawlKeyword{
-		ID:              primitive.NewObjectID(),
-		Keyword:         "숙박",
-		IsAlive:         true,
-		RegisteredIndex: startIndex,
-		LastIndex:       startIndex,
-		CreatedAt:       time.Time{},
-		UpdatedAt:       time.Time{},
+	keywords := []domain.CrawlKeyword{
+		{
+			ID:              primitive.NewObjectID(),
+			Keyword:         "숙박",
+			IsAlive:         true,
+			RegisteredIndex: startIndex,
+			LastIndex:       startIndex,
+			CreatedAt:       time.Time{},
+			UpdatedAt:       time.Time{},
+		},
+		{
+			ID:              primitive.NewObjectID(),
+			Keyword:         "호텔",
+			IsAlive:         true,
+			RegisteredIndex: startIndex,
+			LastIndex:       startIndex,
+			CreatedAt:       time.Time{},
+			UpdatedAt:       time.Time{},
+		},
+		{
+			ID:              primitive.NewObjectID(),
+			Keyword:         "양도",
+			IsAlive:         true,
+			RegisteredIndex: startIndex,
+			LastIndex:       startIndex,
+			CreatedAt:       time.Time{},
+			UpdatedAt:       time.Time{},
+		},
 	}
 
-	err := config.Repo.CrawlKeywords.InsertKeyword(keyword.Keyword, keyword.RegisteredIndex)
-	if err != nil {
-		// config.Logger.Error("failed to insert keyword", zap.Error(err))
-		log.Fatalln("failed to insert keyword", zap.Error(err))
-		return
+	for _, keyword := range keywords {
+		err := config.Repo.CrawlKeywords.InsertKeyword(keyword.Keyword, keyword.RegisteredIndex)
+		if err != nil {
+			// config.Logger.Error("failed to insert keyword", zap.Error(err))
+			log.Fatalln("failed to insert keyword", zap.Error(err))
+			return
+		}
 	}
+
 }
