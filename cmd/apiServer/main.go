@@ -32,6 +32,13 @@ func main() {
 	e.GET("/product/:id", routes.GetProduct)
 	e.GET("/products", routes.ListProducts)
 
+	e.POST("/user", routes.RegisterUser)
+	e.POST("/user/likes", routes.ListLikeProducts)
+	e.PUT("/user/like", routes.LikeProduct)
+
+	e.POST("/orders", routes.ListOrders)
+	e.POST("/order", routes.CreateOrder)
+
 	port := viper.GetString("API_PORT")
 	log.Println("PORT", port)
 	e.Logger.Fatal(e.Start(":" + port))
