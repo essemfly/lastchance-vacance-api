@@ -94,7 +94,7 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 
 	c.OnHTML("#article-images", func(e *colly.HTMLElement) {
 		e.ForEach("img", func(_ int, e *colly.HTMLElement) {
-			imageUrl := e.Attr("src")
+			imageUrl := e.Attr("data-lazy")
 			newProduct.Images = append(newProduct.Images, imageUrl)
 		})
 	})
@@ -110,7 +110,21 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 	})
 
 	c.OnHTML("#article-description", func(e *colly.HTMLElement) {
-		category := e.ChildText("#article-category")
+		categoryAndWrittenDate := e.ChildText("#article-category")
+		spliter := "∙"
+		categoryParsers := strings.Split(categoryAndWrittenDate, spliter)
+		if len(categoryParsers) > 1 {
+			if strings.Contains(categoryParsers[1], "시간") {
+				numHours, _ := extractIntFromString(categoryParsers[1])
+				now := time.Now()
+				newProduct.WrittenAt = now.Add(-1 * time.Duration(numHours) * time.Hour)
+			} else if strings.Contains(categoryParsers[1], "일") {
+				numDays, _ := extractIntFromString(categoryParsers[1])
+				now := time.Now()
+				newProduct.WrittenAt = now.Add(-1 * time.Duration(numDays) * 24 * time.Hour)
+			}
+		}
+
 		title := e.ChildText("#article-title")
 		price := e.ChildText("#article-price")
 		description := e.ChildText("#article-detail")
@@ -121,7 +135,7 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 		newProduct.Description = description
 
 		likeCount, viewCount, chatCount := ParseViewCountsString(articleCounts)
-		newProduct.CrawlCategory = category
+		newProduct.CrawlCategory = categoryParsers[0]
 		newProduct.LikeCounts = likeCount
 		newProduct.ViewCounts = viewCount
 		newProduct.ChatCounts = chatCount

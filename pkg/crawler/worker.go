@@ -12,7 +12,8 @@ import (
 const (
 	chunkSize        = 1000
 	numWorkers       = 5
-	GlobalStartIndex = 531250000 // 2023-02-08 15:00:00
+	GlobalStartIndex = 533500000 // 2023-02-12 16:00:00
+	// 531250000 : 2023-02-08 15:00:00
 )
 
 func DanggnCrawler() {
@@ -25,6 +26,7 @@ func DanggnCrawler() {
 	}
 
 	lastIndex := getLastIndex()
+	log.Println("Last Index! ", lastIndex)
 	for isIndexExists(lastIndex + chunkSize) {
 		startIndex := lastIndex + 1
 		lastIndex = startIndex + chunkSize - 1

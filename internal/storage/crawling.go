@@ -38,7 +38,7 @@ func (repo *crawlThreadRepo) FindLastIndex() (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	findOptions := options.FindOne().SetSort(bson.D{{Key: "lastIndex", Value: -1}})
+	findOptions := options.FindOne().SetSort(bson.D{{Key: "lastindex", Value: -1}})
 
 	var result *domain.CrawlThread
 

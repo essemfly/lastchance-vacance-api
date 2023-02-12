@@ -30,6 +30,7 @@ func AddProductInCrawled(pd *domain.CrawlProduct) (*domain.Product, error) {
 		Status:          statusMatching[pd.Status],
 		DiscountedPrice: pd.Price,
 		Outlink:         pd.Url,
+		WrittenAt:       pd.WrittenAt,
 		ViewCounts:      pd.ViewCounts,
 		LikeCounts:      pd.LikeCounts,
 		ChatCounts:      pd.ChatCounts,

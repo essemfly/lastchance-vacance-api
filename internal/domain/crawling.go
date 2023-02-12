@@ -56,6 +56,7 @@ type CrawlProduct struct {
 	SellerNickName    string             `json:"seller_nickname"`
 	SellerRegionName  string             `json:"seller_region_name"`
 	SellerTemperature string             `json:"seller_temperature"`
+	WrittenAt         time.Time          `json:"written_at"`
 	CreatedAt         time.Time          `json:"created_at"`
 	UpdatedAt         time.Time          `json:"updated_at"`
 }

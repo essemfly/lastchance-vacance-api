@@ -38,3 +38,18 @@ func ParseViewCountsString(letter string) (int, int, int) {
 	}
 	return likeCount, viewCount, chatCount
 }
+
+func extractIntFromString(input string) (int, error) {
+	var result int
+	var sb strings.Builder
+	for _, char := range input {
+		if char >= '0' && char <= '9' {
+			sb.WriteRune(char)
+		}
+	}
+	parsedInt, err := strconv.Atoi(sb.String())
+	if err == nil {
+		result = parsedInt
+	}
+	return result, err
+}

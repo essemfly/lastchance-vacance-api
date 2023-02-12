@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/1000king/handover/cmd"
 	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/internal/domain"
 	"github.com/1000king/handover/pkg/product"
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
+	cmd.InitBase()
 
 	crawlProductFilter := &domain.CrawlProductFilter{
 		Status: domain.DANGGN_STATUS_SALE,
