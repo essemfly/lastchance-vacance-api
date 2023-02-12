@@ -21,12 +21,19 @@ func AddProductInCrawled(pd *domain.CrawlProduct) (*domain.Product, error) {
 		domain.DANGGN_STATUS_UNKNOWN: domain.PRODUCT_STATUS_UNKNOWN,
 	}
 
+	defaultImage := ""
+	if len(pd.Images) > 0 {
+		defaultImage = pd.Images[0]
+	}
+
 	newPd := &domain.Product{
 		CrawlProductID:  pd.ID,
 		Name:            pd.Name,
 		UploadType:      domain.PRODUCT_TYPE_DANGGN,
 		Description:     pd.Description,
 		Images:          pd.Images,
+		DefaultImage:    defaultImage,
+		WrittenAddr:     pd.SellerRegionName,
 		Status:          statusMatching[pd.Status],
 		DiscountedPrice: pd.Price,
 		Outlink:         pd.Url,

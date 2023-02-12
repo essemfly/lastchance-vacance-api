@@ -33,6 +33,8 @@ type Product struct {
 	UploadType      ProductType        `json:"upload_type"`
 	Description     string             `json:"description"`
 	Images          []string           `json:"images"`
+	DefaultImage    string             `json:"default_image"`
+	WrittenAddr     string             `json:"written_addr"`
 	Status          ProductStatus      `json:"status"`
 	OriginalPrice   int                `json:"original_price"`
 	DiscountedPrice int                `json:"discounted_price"`
