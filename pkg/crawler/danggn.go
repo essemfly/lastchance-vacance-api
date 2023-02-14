@@ -114,7 +114,11 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 		spliter := "∙"
 		categoryParsers := strings.Split(categoryAndWrittenDate, spliter)
 		if len(categoryParsers) > 1 {
-			if strings.Contains(categoryParsers[1], "시간") {
+			if strings.Contains(categoryParsers[1], "분") {
+				numMinutes, _ := extractIntFromString(categoryParsers[1])
+				now := time.Now()
+				newProduct.WrittenAt = now.Add(-1 * time.Duration(numMinutes) * time.Minute)
+			} else if strings.Contains(categoryParsers[1], "시간") {
 				numHours, _ := extractIntFromString(categoryParsers[1])
 				now := time.Now()
 				newProduct.WrittenAt = now.Add(-1 * time.Duration(numHours) * time.Hour)
