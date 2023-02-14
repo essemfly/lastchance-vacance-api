@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/1000king/handover/cmd"
 	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/internal/domain"
@@ -11,31 +13,34 @@ import (
 func main() {
 	cmd.InitBase()
 
-	crawlProductFilter := &domain.CrawlProductFilter{
-		Status: domain.DANGGN_STATUS_SALE,
-	}
-	offset, limit := 0, 1000
-	crawlPds, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
-	if err != nil {
-		config.Logger.Error("failed to list product", zap.Error(err))
-	}
-	for _, pd := range crawlPds {
-		updateCrawledProductStatus(pd)
-		product.AddProductInCrawled(pd)
-	}
+	for {
+		crawlProductFilter := &domain.CrawlProductFilter{
+			Status: domain.DANGGN_STATUS_SALE,
+		}
+		offset, limit := 0, 1000
+		crawlPds, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+		if err != nil {
+			config.Logger.Error("failed to list product", zap.Error(err))
+		}
+		for _, pd := range crawlPds {
+			updateCrawledProductStatus(pd)
+			product.AddProductInCrawled(pd)
+		}
 
-	if total > limit {
-		for i := 1; i < total/limit; i++ {
-			offset = i * limit
-			crawlPds, _, err = config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
-			if err != nil {
-				config.Logger.Error("failed to list product", zap.Error(err))
-			}
-			for _, pd := range crawlPds {
-				updateCrawledProductStatus(pd)
-				product.AddProductInCrawled(pd)
+		if total > limit {
+			for i := 1; i < total/limit; i++ {
+				offset = i * limit
+				crawlPds, _, err = config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+				if err != nil {
+					config.Logger.Error("failed to list product", zap.Error(err))
+				}
+				for _, pd := range crawlPds {
+					updateCrawledProductStatus(pd)
+					product.AddProductInCrawled(pd)
+				}
 			}
 		}
+		time.Sleep(10 * time.Minute)
 	}
 }
 
