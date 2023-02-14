@@ -30,6 +30,15 @@ func AddKeywordSeed(startIndex int) {
 			CreatedAt:       time.Time{},
 			UpdatedAt:       time.Time{},
 		},
+		{
+			ID:              primitive.NewObjectID(),
+			Keyword:         "리조트",
+			IsAlive:         true,
+			RegisteredIndex: startIndex,
+			LastIndex:       startIndex,
+			CreatedAt:       time.Time{},
+			UpdatedAt:       time.Time{},
+		},
 	}
 
 	for _, keyword := range keywords {
