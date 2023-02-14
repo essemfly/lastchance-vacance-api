@@ -23,16 +23,7 @@ func AddKeywordSeed(startIndex int) {
 		},
 		{
 			ID:              primitive.NewObjectID(),
-			Keyword:         "호텔",
-			IsAlive:         true,
-			RegisteredIndex: startIndex,
-			LastIndex:       startIndex,
-			CreatedAt:       time.Time{},
-			UpdatedAt:       time.Time{},
-		},
-		{
-			ID:              primitive.NewObjectID(),
-			Keyword:         "양도",
+			Keyword:         "팬션",
 			IsAlive:         true,
 			RegisteredIndex: startIndex,
 			LastIndex:       startIndex,
