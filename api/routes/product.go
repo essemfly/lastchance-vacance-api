@@ -25,7 +25,7 @@ func ListProducts(c echo.Context) error {
 	offsetStr := c.QueryParam("offset")
 	limitStr := c.QueryParam("limit")
 	search := c.QueryParam("search")
-	offset, limit := 0, 100
+	offset, limit := 0, 1000
 
 	productFilter := &domain.ProductFilter{
 		SearchKeyword: search,

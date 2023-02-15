@@ -58,7 +58,7 @@ func (repo *productRepo) List(filter *domain.ProductFilter, offset, limit int) (
 	defer cancel()
 
 	options := options.Find()
-	options.SetSort(bson.D{{Key: "_id", Value: 1}})
+	options.SetSort(bson.D{{Key: "_id", Value: -1}})
 	options.SetSkip(int64(offset))
 	options.SetLimit(int64(limit))
 
