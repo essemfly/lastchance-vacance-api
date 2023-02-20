@@ -17,7 +17,7 @@ func main() {
 		crawlProductFilter := &domain.CrawlProductFilter{
 			Status: domain.DANGGN_STATUS_SALE,
 		}
-		offset, limit := 0, 1000
+		offset, limit := 0, 10000
 		crawlPds, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
 		if err != nil {
 			config.Logger.Error("failed to list product", zap.Error(err))
