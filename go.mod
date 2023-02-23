@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/gocolly/colly v1.2.0
-	github.com/labstack/echo v3.3.10+incompatible
 	github.com/spf13/viper v1.14.0
 	go.mongodb.org/mongo-driver v1.11.1
 	go.uber.org/zap v1.21.0

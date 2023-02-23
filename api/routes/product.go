@@ -6,7 +6,7 @@ import (
 
 	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/internal/domain"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

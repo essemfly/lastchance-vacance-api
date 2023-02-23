@@ -45,6 +45,7 @@ func (repo *userRepo) Upsert(user *domain.User) (*domain.User, error) {
 		user.ID = primitive.NewObjectID()
 		user.CreatedAt = time.Now()
 	} else {
+		prevUser.Mobile = user.Mobile
 		user = prevUser
 	}
 
@@ -73,14 +74,13 @@ func (repo *userLikeRepo) Upsert(userId primitive.ObjectID, pd *domain.Product) 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	var userLike *domain.UserLike
-
+	var userLike domain.UserLike
 	err := repo.col.FindOne(ctx, bson.M{"userid": userId, "productid": pd.ID}).Decode(&userLike)
 	if err != nil {
 		if err != mongo.ErrNoDocuments {
 			return nil, err
 		}
-		userLike.ID = primitive.NewObjectID()
+		userLike.ID = primitive.NewObjectIDFromTimestamp(time.Now())
 		userLike.UserId = userId
 		userLike.ProductId = pd.ID
 		userLike.IsLiked = true
@@ -93,11 +93,11 @@ func (repo *userLikeRepo) Upsert(userId primitive.ObjectID, pd *domain.Product) 
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": userLike.ID}
-	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": userLike}, opts); err != nil {
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &userLike}, opts); err != nil {
 		return nil, err
 	}
 
-	return userLike, nil
+	return &userLike, nil
 }
 
 func (repo *userLikeRepo) List(filter *domain.UserLikeFilter) ([]*domain.UserLike, error) {

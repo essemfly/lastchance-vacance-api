@@ -6,9 +6,10 @@ import (
 
 	"github.com/1000king/handover/api/routes"
 	"github.com/1000king/handover/cmd"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"go.uber.org/zap"
 
-	"github.com/labstack/echo/middleware"
 	"github.com/spf13/viper"
 )
 
@@ -20,30 +21,47 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningKey: []byte(viper.GetString("JWT_SECRET")),
+	logger, _ := zap.NewProduction()
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			logger.Info("request",
+				zap.String("URI", v.URI),
+				zap.Int("status", v.Status),
+			)
+
+			return nil
+		},
 	}))
+	e.Use(middleware.Recover())
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	e.POST("/user", routes.RegisterUser)
+
 	e.GET("/danggn/:id", routes.GetDanggnProduct)
 	e.GET("/danggns", routes.ListDanggnProducts)
 
-	e.GET("/product/:id", routes.GetProduct)
-	e.GET("/products", routes.ListProducts)
+	r := e.Group("/api")
+	r.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		Claims:     &routes.JwtClaim{},
+		SigningKey: []byte(viper.GetString("JWT_SECRET")),
+	}))
 
-	e.POST("/user", routes.RegisterUser)
-	e.GET("/user/likes", routes.ListLikeProducts)
-	e.POST("/user/like", routes.LikeProduct)
+	r.GET("/product/:id", routes.GetProduct)
+	r.GET("/products", routes.ListProducts)
 
-	e.POST("/orders", routes.ListOrders)
-	e.POST("/order", routes.CreateOrder)
+	r.GET("/user/likes", routes.ListLikeProducts)
+	r.POST("/user/like", routes.LikeProduct)
+
+	r.GET("/user/orders", routes.ListOrders)
+	r.POST("/user/order", routes.CreateOrder)
 
 	port := viper.GetString("API_PORT")
 	log.Println("PORT", port)
+
 	e.Logger.Fatal(e.Start(":" + port))
 }
