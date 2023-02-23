@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/1000king/handover/config"
@@ -10,9 +11,11 @@ import (
 )
 
 func ListOrders(c echo.Context) error {
-	userIdStr := c.FormValue("userid")
+	userIdStr, err := authHandler(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, fmt.Sprintf("Unauthorized: %s", err))
+	}
 	userId, _ := primitive.ObjectIDFromHex(userIdStr)
-
 	orderFilter := &domain.OrderFilter{
 		UserId: userId,
 	}
@@ -38,7 +41,10 @@ func ListOrders(c echo.Context) error {
 }
 
 func CreateOrder(c echo.Context) error {
-	userIdStr := c.FormValue("userid")
+	userIdStr, err := authHandler(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, fmt.Sprintf("Unauthorized: %s", err))
+	}
 	userId, _ := primitive.ObjectIDFromHex(userIdStr)
 	pdIdStr := c.FormValue("productid")
 	pdId, _ := primitive.ObjectIDFromHex(pdIdStr)

@@ -69,19 +69,19 @@ type userLikeRepo struct {
 	col *mongo.Collection
 }
 
-func (repo *userLikeRepo) Upsert(user *domain.User, pd *domain.Product) (*domain.UserLike, error) {
+func (repo *userLikeRepo) Upsert(userId primitive.ObjectID, pd *domain.Product) (*domain.UserLike, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	var userLike *domain.UserLike
 
-	err := repo.col.FindOne(ctx, bson.M{"userid": user.ID, "productid": pd.ID}).Decode(&userLike)
+	err := repo.col.FindOne(ctx, bson.M{"userid": userId, "productid": pd.ID}).Decode(&userLike)
 	if err != nil {
 		if err != mongo.ErrNoDocuments {
 			return nil, err
 		}
 		userLike.ID = primitive.NewObjectID()
-		userLike.UserId = user.ID
+		userLike.UserId = userId
 		userLike.ProductId = pd.ID
 		userLike.IsLiked = true
 		userLike.CreatedAt = time.Now()
@@ -93,7 +93,7 @@ func (repo *userLikeRepo) Upsert(user *domain.User, pd *domain.Product) (*domain
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": userLike.ID}
-	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": user}, opts); err != nil {
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": userLike}, opts); err != nil {
 		return nil, err
 	}
 

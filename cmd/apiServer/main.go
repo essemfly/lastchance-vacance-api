@@ -7,6 +7,7 @@ import (
 	"github.com/1000king/handover/api/routes"
 	"github.com/1000king/handover/cmd"
 	"github.com/labstack/echo"
+
 	"github.com/labstack/echo/middleware"
 	"github.com/spf13/viper"
 )
@@ -21,6 +22,9 @@ func main() {
 	}))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningKey: []byte(viper.GetString("JWT_SECRET")),
+	}))
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
@@ -33,8 +37,8 @@ func main() {
 	e.GET("/products", routes.ListProducts)
 
 	e.POST("/user", routes.RegisterUser)
-	e.POST("/user/likes", routes.ListLikeProducts)
-	e.PUT("/user/like", routes.LikeProduct)
+	e.GET("/user/likes", routes.ListLikeProducts)
+	e.POST("/user/like", routes.LikeProduct)
 
 	e.POST("/orders", routes.ListOrders)
 	e.POST("/order", routes.CreateOrder)

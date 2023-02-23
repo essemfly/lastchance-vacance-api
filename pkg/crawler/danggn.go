@@ -95,6 +95,7 @@ func crawlPage(index int) (*domain.CrawlProduct, error) {
 	c.OnHTML("#article-images", func(e *colly.HTMLElement) {
 		e.ForEach("img", func(_ int, e *colly.HTMLElement) {
 			imageUrl := e.Attr("data-lazy")
+			imageUrl = strings.Replace(imageUrl, "s=1440x1440", "s=480x480", 1)
 			newProduct.Images = append(newProduct.Images, imageUrl)
 		})
 	})
