@@ -27,8 +27,8 @@ func GetProduct(c echo.Context) error {
 }
 
 func ListProducts(c echo.Context) error {
-	offsetStr := c.QueryParam("offset")
-	limitStr := c.QueryParam("limit")
+	offsetStr := c.QueryParam("page")
+	limitStr := c.QueryParam("size")
 	search := c.QueryParam("search")
 	offset, limit := 0, 1000
 
