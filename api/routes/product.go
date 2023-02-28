@@ -27,24 +27,21 @@ func GetProduct(c echo.Context) error {
 }
 
 func ListProducts(c echo.Context) error {
-	pageStr := c.QueryParam("page")
-	sizeStr := c.QueryParam("size")
+	offsetStr := c.QueryParam("page")
+	limitStr := c.QueryParam("size")
 	search := c.QueryParam("search")
-	page, size := 0, 1000
+	offset, limit := 0, 1000
 
 	productFilter := &domain.ProductFilter{
 		SearchKeyword: search,
 	}
 
-	if pageStr != "" {
-		page, _ = strconv.Atoi(pageStr)
+	if offsetStr != "" {
+		offset, _ = strconv.Atoi(offsetStr)
 	}
-	if sizeStr != "" {
-		size, _ = strconv.Atoi(sizeStr)
+	if limitStr != "" {
+		limit, _ = strconv.Atoi(limitStr)
 	}
-
-	offset := page * size
-	limit := size
 
 	products, totalCnt, err := config.Repo.Products.List(productFilter, offset, limit)
 	if err != nil {
