@@ -10,6 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type ListProductsResponse struct {
+	Products []*domain.Product `json:"products"`
+	TotalCnt int               `json:"totalCnt"`
+}
+
 func GetProduct(c echo.Context) error {
 	productIDStr := c.Param("id")
 	productID, _ := primitive.ObjectIDFromHex(productIDStr)
@@ -38,10 +43,15 @@ func ListProducts(c echo.Context) error {
 		limit, _ = strconv.Atoi(limitStr)
 	}
 
-	products, _, err := config.Repo.Products.List(productFilter, offset, limit)
+	products, totalCnt, err := config.Repo.Products.List(productFilter, offset, limit)
 	if err != nil {
 		panic(err)
 	}
 
-	return c.JSON(http.StatusOK, products)
+	productsResponse := ListProductsResponse{
+		TotalCnt: totalCnt,
+		Products: products,
+	}
+
+	return c.JSON(http.StatusOK, productsResponse)
 }
