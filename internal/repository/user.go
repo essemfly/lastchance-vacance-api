@@ -11,6 +11,7 @@ type UsersRepository interface {
 }
 
 type UserLikesRepository interface {
+	Get(userID primitive.ObjectID, productID primitive.ObjectID) (*domain.UserLike, error)
 	List(filter *domain.UserLikeFilter) ([]*domain.UserLike, error)
 	Upsert(primitive.ObjectID, *domain.Product) (*domain.UserLike, error)
 }

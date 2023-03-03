@@ -6,9 +6,15 @@ import (
 
 	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/internal/domain"
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+type GetProductResponse struct {
+	Product  *domain.Product  `json:"product"`
+	UserLike *domain.UserLike `json:"userLike"`
+}
 
 type ListProductsResponse struct {
 	Products []*domain.Product `json:"products"`
@@ -23,7 +29,21 @@ func GetProduct(c echo.Context) error {
 		panic(err)
 	}
 
-	return c.JSON(http.StatusOK, pd)
+	userIdStr := c.Get("user").(*jwt.Token)
+	claims := userIdStr.Claims.(*JwtClaim)
+	userID, _ := primitive.ObjectIDFromHex(claims.UserId)
+
+	userLike, err := config.Repo.UserLikes.Get(userID, productID)
+	if err != nil {
+		panic(err)
+	}
+
+	productResponse := &GetProductResponse{
+		Product:  pd,
+		UserLike: userLike,
+	}
+
+	return c.JSON(http.StatusOK, productResponse)
 }
 
 func ListProducts(c echo.Context) error {

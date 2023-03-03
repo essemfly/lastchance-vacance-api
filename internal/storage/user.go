@@ -70,6 +70,22 @@ type userLikeRepo struct {
 	col *mongo.Collection
 }
 
+func (repo *userLikeRepo) Get(userID primitive.ObjectID, productID primitive.ObjectID) (*domain.UserLike, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var userLike domain.UserLike
+	err := repo.col.FindOne(ctx, bson.M{"userid": userID, "productid": productID}).Decode(&userLike)
+	if err != nil {
+		if err != mongo.ErrNoDocuments {
+			return nil, err
+		}
+		return nil, nil
+	}
+
+	return &userLike, nil
+}
+
 func (repo *userLikeRepo) Upsert(userId primitive.ObjectID, pd *domain.Product) (*domain.UserLike, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
