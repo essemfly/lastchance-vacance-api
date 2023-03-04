@@ -61,7 +61,7 @@ func getLastIndex() int {
 }
 
 func isIndexExists(index int) bool {
-	_, err := crawlPage(index)
+	_, err := CrawlPage(index)
 	errCounts := 0
 
 	for err != nil {
@@ -72,7 +72,7 @@ func isIndexExists(index int) bool {
 
 		rand.Seed(time.Now().UnixNano())
 		n := rand.Intn(11)
-		_, err = crawlPage(index + n)
+		_, err = CrawlPage(index + n)
 	}
 
 	return true

@@ -15,12 +15,12 @@ func TestCrawlPage(t *testing.T) {
 	saleIdx := 362459007
 	removedIdx := 362459009
 
-	_, err := crawlPage(hideIdx)
+	_, err := CrawlPage(hideIdx)
 	if err == nil {
 		t.Errorf("hide product should emit error")
 	}
 
-	soldoutPd, err := crawlPage(soldoutIdx)
+	soldoutPd, err := CrawlPage(soldoutIdx)
 	if err != nil {
 		t.Errorf("soldout product should not emit error")
 	}

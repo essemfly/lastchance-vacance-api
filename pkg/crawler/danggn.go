@@ -22,7 +22,7 @@ func crawlDanggnIndex(worker chan bool, done chan bool, keywords []*domain.Crawl
 	log.Println("start crawling danggn index", zap.Int("startIndex", startIndex), zap.Int("lastIndex", lastIndex))
 	numMatchedProducts := 0
 	for i := startIndex; i <= lastIndex; i++ {
-		newProduct, err := crawlPage(i)
+		newProduct, err := CrawlPage(i)
 		if err != nil {
 			if err.Error() == "Not Found" {
 				continue
@@ -60,7 +60,7 @@ func crawlDanggnIndex(worker chan bool, done chan bool, keywords []*domain.Crawl
 	done <- true
 }
 
-func crawlPage(index int) (*domain.CrawlProduct, error) {
+func CrawlPage(index int) (*domain.CrawlProduct, error) {
 	if index%500 == 0 {
 		// config.Logger.Info("start crawling danggn page", zap.Int("index", index))
 		log.Println("start crawling danggn page", zap.Int("index", index))
