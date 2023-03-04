@@ -20,6 +20,7 @@ type MongoDB struct {
 	userLikeCol     *mongo.Collection
 	orderCol        *mongo.Collection
 	notificationCol *mongo.Collection
+	keywordCol      *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -40,6 +41,7 @@ func NewMongoDB() *MongoDB {
 		userLikeCol:     db.Collection("user_likes"),
 		orderCol:        db.Collection("orders"),
 		notificationCol: db.Collection("notifications"),
+		keywordCol:      db.Collection("keywords"),
 	}
 }
 

@@ -28,7 +28,7 @@ func TestCrawlPage(t *testing.T) {
 		t.Errorf("soldout product should be soldout status")
 	}
 
-	salePd, err := crawlPage(saleIdx)
+	salePd, err := CrawlPage(saleIdx)
 	if err != nil {
 		t.Errorf("sale product should not emit error")
 	}
@@ -36,7 +36,7 @@ func TestCrawlPage(t *testing.T) {
 		t.Errorf("sale product should be sale status")
 	}
 
-	_, err = crawlPage(removedIdx)
+	_, err = CrawlPage(removedIdx)
 	if err == nil {
 		t.Errorf("removed product should emit error")
 	}
