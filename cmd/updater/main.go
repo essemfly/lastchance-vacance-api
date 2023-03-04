@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/1000king/handover/cmd"
@@ -50,7 +51,9 @@ func main() {
 						continue
 					}
 					updateCrawledProduct(pd, updatedCrawlProduct)
-					product.AddProductInCrawled(pd)
+					if screenCrawledProdduct(pd) {
+						product.AddProductInCrawled(pd)
+					}
 				}
 			}
 		}
@@ -70,4 +73,26 @@ func updateCrawledProduct(pd *domain.CrawlProduct, newPd *domain.CrawlProduct) {
 	if err != nil {
 		config.Logger.Error("failed to update product", zap.Error(err))
 	}
+}
+
+func screenCrawledProdduct(pd *domain.CrawlProduct) bool {
+	if strings.Contains(pd.Name, "젤다") {
+		return false
+	}
+	if strings.Contains(pd.Name, "레고") {
+		return false
+	}
+	if strings.Contains(pd.Name, "서스펜션") {
+		return false
+	}
+	if strings.Contains(pd.Name, "삽니다") {
+		return false
+	}
+	if strings.Contains(pd.Name, "구합니다") {
+		return false
+	}
+	if strings.Contains(pd.Name, "구해봅니다") {
+		return false
+	}
+	return true
 }
