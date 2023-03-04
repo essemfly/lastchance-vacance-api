@@ -90,6 +90,9 @@ func CrawlPage(index int) (*domain.CrawlProduct, error) {
 		} else {
 			newProduct.Status = domain.DANGGN_STATUS_UNKNOWN
 		}
+
+		regionName := e.ChildAttr("meta[name='twitter:data2']", "content")
+		newProduct.SellerRegionName = regionName
 	})
 
 	c.OnHTML("#article-images", func(e *colly.HTMLElement) {
@@ -102,11 +105,9 @@ func CrawlPage(index int) (*domain.CrawlProduct, error) {
 
 	c.OnHTML("#article-profile", func(e *colly.HTMLElement) {
 		nickName := e.ChildText("#nickname")
-		regionName := e.ChildText("#region-name")
 		temperature := e.ChildText("#temperature-wrap dd")
 
 		newProduct.SellerNickName = nickName
-		newProduct.SellerRegionName = regionName
 		newProduct.SellerTemperature = temperature
 	})
 
