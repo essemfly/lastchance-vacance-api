@@ -62,7 +62,19 @@ func (repo *productRepo) List(filter *domain.ProductFilter, offset, limit int) (
 	options.SetSkip(int64(offset))
 	options.SetLimit(int64(limit))
 
+	twoWeeksAgo := time.Now().AddDate(0, 0, -14)
 	mongoFilter := bson.M{}
+
+	if filter.SearchKeyword != "" {
+		mongoFilter["$or"] = []bson.M{
+			{"name": primitive.Regex{Pattern: filter.SearchKeyword, Options: "i"}},
+			{"description": primitive.Regex{Pattern: filter.SearchKeyword, Options: "i"}},
+			{"writtenaddr": primitive.Regex{Pattern: filter.SearchKeyword, Options: "i"}},
+		}
+	} else {
+		mongoFilter["status"] = domain.PRODUCT_STATUS_SALE
+		mongoFilter["writtenat"] = bson.M{"$gte": twoWeeksAgo}
+	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, mongoFilter)
 	cursor, err := repo.col.Find(ctx, mongoFilter, options)
