@@ -8,4 +8,5 @@ func InitBase() {
 	config.InitLogger()
 	config.InitViper()
 	config.InitRegisterRepo()
+	config.InitNotification()
 }
