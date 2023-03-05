@@ -14,7 +14,7 @@ type AddProductRequest struct {
 	Outlink         string   `json:"outlink"`
 }
 
-func AddProductInCrawled(pd *domain.CrawlProduct) (*domain.Product, error) {
+func AddProductInCrawled(crawlPd *domain.CrawlProduct) (*domain.Product, error) {
 	statusMatching := map[domain.DanggnStatus]domain.ProductStatus{
 		domain.DANGGN_STATUS_SALE:    domain.PRODUCT_STATUS_SALE,
 		domain.DANGGN_STATUS_SOLDOUT: domain.PRODUCT_STATUS_SOLDOUT,
@@ -22,28 +22,35 @@ func AddProductInCrawled(pd *domain.CrawlProduct) (*domain.Product, error) {
 	}
 
 	defaultImage := ""
-	if len(pd.Images) > 0 {
-		defaultImage = pd.Images[0]
+	if len(crawlPd.Images) > 0 {
+		defaultImage = crawlPd.Images[0]
 	}
 
 	newPd := &domain.Product{
-		CrawlProductID:  pd.ID,
-		Name:            pd.Name,
+		CrawlProductID:  crawlPd.ID,
+		Name:            crawlPd.Name,
 		UploadType:      domain.PRODUCT_TYPE_DANGGN,
-		Description:     pd.Description,
-		Images:          pd.Images,
+		Description:     crawlPd.Description,
+		Images:          crawlPd.Images,
 		DefaultImage:    defaultImage,
-		WrittenAddr:     pd.SellerRegionName,
-		Status:          statusMatching[pd.Status],
-		DiscountedPrice: pd.Price,
-		Outlink:         pd.Url,
-		WrittenAt:       pd.WrittenAt,
-		ViewCounts:      pd.ViewCounts,
-		LikeCounts:      pd.LikeCounts,
-		ChatCounts:      pd.ChatCounts,
+		WrittenAddr:     crawlPd.SellerRegionName,
+		Status:          statusMatching[crawlPd.Status],
+		DiscountedPrice: crawlPd.Price,
+		Outlink:         crawlPd.Url,
+		WrittenAt:       crawlPd.WrittenAt,
+		ViewCounts:      crawlPd.ViewCounts,
+		LikeCounts:      crawlPd.LikeCounts,
+		ChatCounts:      crawlPd.ChatCounts,
 	}
 
-	return config.Repo.Products.Insert(newPd)
+	pd, err := config.Repo.Products.GetByCrawlID(crawlPd.ID)
+	if err != nil {
+		return config.Repo.Products.Insert(newPd)
+	}
+
+	newPd.ID = pd.ID
+	return config.Repo.Products.Update(newPd)
+
 }
 
 func AddProductManual(addPdReq *AddProductRequest) (*domain.Product, error) {

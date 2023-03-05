@@ -21,43 +21,32 @@ func main() {
 			Status: domain.DANGGN_STATUS_SALE,
 		}
 		offset, limit := 0, 1000
-		crawlPds, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+		_, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
 		if err != nil {
 			config.Logger.Error("failed to list product", zap.Error(err))
 		}
-		for _, pd := range crawlPds {
-			danggnIndex, _ := strconv.Atoi(pd.DanggnIndex)
-			updatedCrawlProduct, err := crawler.CrawlPage(danggnIndex)
+
+		for total > offset {
+			crawlPds, _, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
 			if err != nil {
-				zap.Error(err)
-				continue
+				config.Logger.Error("failed to list product", zap.Error(err))
 			}
-			updateCrawledProduct(pd, updatedCrawlProduct)
-			product.AddProductInCrawled(pd)
+			for _, pd := range crawlPds {
+				danggnIndex, _ := strconv.Atoi(pd.DanggnIndex)
+				updatedCrawlProduct, err := crawler.CrawlPage(danggnIndex)
+				if err != nil {
+					zap.Error(err)
+					continue
+				}
+				updateCrawledProduct(pd, updatedCrawlProduct)
+				if screenCrawledProdduct(pd) {
+					product.AddProductInCrawled(pd)
+				}
+			}
+			offset += limit
 		}
 
-		if total > limit {
-			for i := 1; i < total/limit; i++ {
-				offset = i * limit
-				crawlPds, _, err = config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
-				if err != nil {
-					config.Logger.Error("failed to list product", zap.Error(err))
-				}
-				for _, pd := range crawlPds {
-					danggnIndex, _ := strconv.Atoi(pd.DanggnIndex)
-					updatedCrawlProduct, err := crawler.CrawlPage(danggnIndex)
-					if err != nil {
-						zap.Error(err)
-						continue
-					}
-					updateCrawledProduct(pd, updatedCrawlProduct)
-					if screenCrawledProdduct(pd) {
-						product.AddProductInCrawled(pd)
-					}
-				}
-			}
-		}
-		time.Sleep(10 * time.Minute)
+		time.Sleep(3 * time.Minute)
 	}
 }
 

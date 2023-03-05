@@ -46,15 +46,7 @@ func NewMongoDB() *MongoDB {
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {
-	// mongoUri := "mongodb://" + viper.GetString("MONGO_URL") + "/" + viper.GetString("MONGO_DB_NAME") + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
-
-	// clientOptions := options.Client().ApplyURI(mongoUri).SetAuth(options.Credential{
-	// 	Username: viper.GetString("MONGO_USERNAME"),
-	// 	Password: viper.GetString("MONGO_PASSWORD"),
-	// })
-	// mongoClient, err := mongo.Connect(ctx, clientOptions)
-
-	localUri := "mongodb://" + viper.GetString("MONGO_USERNAME") + ":" + viper.GetString("MONGO_PASSWORD") + "@localhost:27017"
+	localUri := "mongodb://" + viper.GetString("MONGO_USERNAME") + ":" + viper.GetString("MONGO_PASSWORD") + "@" + viper.GetString("MONGO_URL")
 	clientOptions := options.Client().ApplyURI(localUri)
 
 	// Connect to MongoDB

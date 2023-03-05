@@ -32,25 +32,20 @@ func (repo *productRepo) Get(ID primitive.ObjectID) (*domain.Product, error) {
 	return pd, nil
 }
 
-func (repo *productRepo) ListByCrawlID(crawlID primitive.ObjectID) ([]*domain.Product, error) {
+func (repo *productRepo) GetByCrawlID(ID primitive.ObjectID) (*domain.Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	mongoFilter := bson.M{
-		"craulid": crawlID,
+		"crawlproductid": ID,
 	}
 
-	cursor, err := repo.col.Find(ctx, mongoFilter)
-	if err != nil {
-		return nil, err
-	}
+	var pd *domain.Product
 
-	var pds []*domain.Product
-	err = cursor.All(ctx, &pds)
-	if err != nil {
+	if err := repo.col.FindOne(ctx, mongoFilter).Decode(&pd); err != nil {
 		return nil, err
 	}
-	return pds, nil
+	return pd, nil
 }
 
 func (repo *productRepo) List(filter *domain.ProductFilter, offset, limit int) ([]*domain.Product, int, error) {
@@ -98,9 +93,7 @@ func (repo *productRepo) Insert(pd *domain.Product) (*domain.Product, error) {
 	pd.CreatedAt = time.Now()
 	pd.UpdatedAt = time.Now()
 
-	opts := options.Update().SetUpsert(true)
-	filter := bson.M{"crawlproductid": pd.CrawlProductID}
-	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": pd}, opts); err != nil {
+	if _, err := repo.col.InsertOne(ctx, pd); err != nil {
 		return nil, err
 	}
 
