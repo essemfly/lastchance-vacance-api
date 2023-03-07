@@ -94,5 +94,9 @@ func ListLikeProducts(c echo.Context) error {
 		pds = append(pds, pd)
 	}
 
+	if len(pds) == 0 {
+		return c.JSON(http.StatusOK, []string{})
+	}
+
 	return c.JSON(http.StatusOK, pds)
 }
