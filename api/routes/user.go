@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"log"
 	"net/http"
 	"time"
 
@@ -64,7 +63,6 @@ func LikeProduct(c echo.Context) error {
 		panic(err)
 	}
 
-	log.Println("userID", userId)
 	userLike, err := config.Repo.UserLikes.Upsert(userId, pd)
 	if err != nil {
 		panic(err)

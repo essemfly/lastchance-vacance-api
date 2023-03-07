@@ -60,6 +60,11 @@ func main() {
 	r.GET("/user/orders", routes.ListOrders)
 	r.POST("/user/order", routes.CreateOrder)
 
+	r.GET("/user/keywords", routes.ListKeywords)
+	r.POST("/user/keyword", routes.InsertKeyword)
+	r.PUT("/user/keyword", routes.UpdateKeyword)
+	r.GET("/user/keyword/products", routes.ListKeywordProducts)
+
 	port := viper.GetString("API_PORT")
 	log.Println("PORT", port)
 

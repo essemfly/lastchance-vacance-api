@@ -46,7 +46,9 @@ func CreateOrder(c echo.Context) error {
 	pdId, _ := primitive.ObjectIDFromHex(pdIdStr)
 	mobile := c.FormValue("mobile")
 
+	pd, _ := config.Repo.Products.Get(pdId)
 	order := &domain.Order{
+		Product:   pd,
 		ProductId: pdId,
 		UserId:    userId,
 		Mobile:    mobile,

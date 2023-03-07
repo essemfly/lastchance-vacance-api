@@ -21,6 +21,7 @@ type OrderFilter struct {
 
 type Order struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Product     *Product           `json:"product"`
 	ProductId   primitive.ObjectID `json:"product_id"`
 	UserId      primitive.ObjectID `json:"user"`
 	Mobile      string             `json:"mobile"`

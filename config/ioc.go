@@ -7,14 +7,16 @@ import (
 )
 
 type iocRepo struct {
-	Products      repository.ProductsRepository
-	CrawlThreads  repository.CrawlThreadsRepository
-	CrawlKeywords repository.CrawlKeywordsRepository
-	CrawlProducts repository.CrawlProductsRepository
-	Users         repository.UsersRepository
-	UserLikes     repository.UserLikesRepository
-	Orders        repository.OrdersRepository
-	Notifications repository.NotificationsRepository
+	Products        repository.ProductsRepository
+	CrawlThreads    repository.CrawlThreadsRepository
+	CrawlKeywords   repository.CrawlKeywordsRepository
+	CrawlProducts   repository.CrawlProductsRepository
+	Users           repository.UsersRepository
+	UserLikes       repository.UserLikesRepository
+	Orders          repository.OrdersRepository
+	Keywords        repository.KeywordsRepository
+	Notifications   repository.NotificationsRepository
+	KeywordProducts repository.KeywordProductsRepository
 }
 
 var Repo iocRepo
@@ -57,5 +59,7 @@ func registerRepos(conn *storage.MongoDB) {
 	Repo.Users = storage.MongoUsersRepo(conn)
 	Repo.UserLikes = storage.MongoUserLikesRepo(conn)
 	Repo.Orders = storage.MongoOrdersRepo(conn)
+	Repo.Keywords = storage.MongoKeywordRepo(conn)
+	Repo.KeywordProducts = storage.MongoKeywordProductsRepo(conn)
 	Repo.Notifications = storage.MongoNotificationsRepo(conn)
 }

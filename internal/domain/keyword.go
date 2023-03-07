@@ -14,3 +14,11 @@ type Keyword struct {
 	CreatedAt time.Time          `json:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at"`
 }
+
+type KeywordProduct struct {
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Keyword   string
+	ProductID primitive.ObjectID
+	UserID    primitive.ObjectID
+	CreatedAt time.Time
+}

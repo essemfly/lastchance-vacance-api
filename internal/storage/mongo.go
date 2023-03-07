@@ -12,15 +12,16 @@ import (
 )
 
 type MongoDB struct {
-	productCol      *mongo.Collection
-	crawlThreadCol  *mongo.Collection
-	crawlKeywordCol *mongo.Collection
-	crawlProductCol *mongo.Collection
-	userCol         *mongo.Collection
-	userLikeCol     *mongo.Collection
-	orderCol        *mongo.Collection
-	notificationCol *mongo.Collection
-	keywordCol      *mongo.Collection
+	productCol        *mongo.Collection
+	crawlThreadCol    *mongo.Collection
+	crawlKeywordCol   *mongo.Collection
+	crawlProductCol   *mongo.Collection
+	userCol           *mongo.Collection
+	userLikeCol       *mongo.Collection
+	orderCol          *mongo.Collection
+	notificationCol   *mongo.Collection
+	keywordCol        *mongo.Collection
+	keywordProductCol *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -33,15 +34,16 @@ func NewMongoDB() *MongoDB {
 	db := mongoClient.Database(viper.GetString("MONGO_DB_NAME"))
 
 	return &MongoDB{
-		productCol:      db.Collection("products"),
-		crawlThreadCol:  db.Collection("crawl_threads"),
-		crawlKeywordCol: db.Collection("crawl_keywords"),
-		crawlProductCol: db.Collection("crawl_products"),
-		userCol:         db.Collection("users"),
-		userLikeCol:     db.Collection("user_likes"),
-		orderCol:        db.Collection("orders"),
-		notificationCol: db.Collection("notifications"),
-		keywordCol:      db.Collection("keywords"),
+		productCol:        db.Collection("products"),
+		crawlThreadCol:    db.Collection("crawl_threads"),
+		crawlKeywordCol:   db.Collection("crawl_keywords"),
+		crawlProductCol:   db.Collection("crawl_products"),
+		userCol:           db.Collection("users"),
+		userLikeCol:       db.Collection("user_likes"),
+		notificationCol:   db.Collection("notifications"),
+		orderCol:          db.Collection("orders"),
+		keywordCol:        db.Collection("keywords"),
+		keywordProductCol: db.Collection("keyword_products"),
 	}
 }
 
