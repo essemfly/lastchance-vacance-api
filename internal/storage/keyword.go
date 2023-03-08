@@ -25,6 +25,7 @@ func (repo *keywordRepo) List(userID string) ([]*domain.Keyword, error) {
 
 	filter := bson.M{
 		"userid": userObjId,
+		"islive": true,
 	}
 
 	cursor, err := repo.col.Find(ctx, filter)
