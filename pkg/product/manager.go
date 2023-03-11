@@ -49,6 +49,7 @@ func AddProductInCrawled(crawlPd *domain.CrawlProduct) (*domain.Product, error) 
 	}
 
 	newPd.ID = pd.ID
+	newPd.CreatedAt = pd.CreatedAt
 	return config.Repo.Products.Update(newPd)
 
 }
