@@ -66,9 +66,22 @@ func ListKeywordProducts(c echo.Context) error {
 	userIdStr := c.Get("user").(*jwt.Token)
 	claims := userIdStr.Claims.(*JwtClaim)
 
-	pds, err := config.Repo.KeywordProducts.List(claims.UserId)
+	keywordPds, err := config.Repo.KeywordProducts.List(claims.UserId)
 	if err != nil {
 		panic(err)
 	}
+	var pds []*domain.Product
+	for _, kpd := range keywordPds {
+		pd, err := config.Repo.Products.Get(kpd.ProductID)
+		if err != nil {
+			panic(err)
+		}
+		pds = append(pds, pd)
+	}
+
+	if len(pds) == 0 {
+		return c.JSON(http.StatusOK, []string{})
+	}
+
 	return c.JSON(http.StatusOK, pds)
 }
