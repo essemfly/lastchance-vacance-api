@@ -29,6 +29,7 @@ func ListDanggnProducts(c echo.Context) error {
 
 	productFilter := &domain.CrawlProductFilter{
 		Keyword: keyword,
+		Status:  domain.DANGGN_STATUS_ALL,
 	}
 
 	if offsetStr != "" {

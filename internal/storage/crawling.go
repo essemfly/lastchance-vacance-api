@@ -137,6 +137,14 @@ func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, li
 
 	mongoFilter := bson.M{}
 
+	if filter.Keyword != "" {
+		mongoFilter["keyword"] = filter.Keyword
+	}
+
+	if filter.Status != domain.DANGGN_STATUS_ALL {
+		mongoFilter["status"] = filter.Status
+	}
+
 	totalCount, _ := repo.col.CountDocuments(ctx, mongoFilter)
 	cursor, err := repo.col.Find(ctx, mongoFilter, options)
 	if err != nil {

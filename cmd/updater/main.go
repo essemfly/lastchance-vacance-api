@@ -18,7 +18,8 @@ func main() {
 
 	for {
 		crawlProductFilter := &domain.CrawlProductFilter{
-			Status: domain.DANGGN_STATUS_SALE,
+			Keyword: "",
+			Status:  domain.DANGGN_STATUS_SALE,
 		}
 		offset, limit := 0, 1000
 		_, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
@@ -65,6 +66,12 @@ func updateCrawledProduct(pd *domain.CrawlProduct, newPd *domain.CrawlProduct) {
 }
 
 func screenCrawledProdduct(pd *domain.CrawlProduct) bool {
+	if pd.Keyword == "직구" {
+		return false
+	}
+	if strings.Contains(pd.Name, "닌텐도") {
+		return false
+	}
 	if strings.Contains(pd.Name, "젤다") {
 		return false
 	}

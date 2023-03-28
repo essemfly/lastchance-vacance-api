@@ -9,6 +9,7 @@ import (
 type DanggnStatus string
 
 const (
+	DANGGN_STATUS_ALL     DanggnStatus = "ALL"
 	DANGGN_STATUS_SALE    DanggnStatus = "SALE"
 	DANGGN_STATUS_SOLDOUT DanggnStatus = "SOLDOUT"
 	DANGGN_STATUS_UNKNOWN DanggnStatus = "UNKNOWN"
