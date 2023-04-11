@@ -46,6 +46,7 @@ func (repo *userRepo) Upsert(user *domain.User) (*domain.User, error) {
 		user.CreatedAt = time.Now()
 	} else {
 		prevUser.Mobile = user.Mobile
+		prevUser.Address = user.Address
 		user = prevUser
 	}
 

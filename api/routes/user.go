@@ -21,11 +21,11 @@ type JwtClaim struct {
 
 func RegisterUser(c echo.Context) error {
 	deviceUUID := c.FormValue("deviceuuid")
-	mobile := c.FormValue("mobile")
 
 	user := &domain.User{
 		DeviceUUID: deviceUUID,
-		Mobile:     mobile,
+		Mobile:     "",
+		Address:    "",
 	}
 
 	newUser, err := config.Repo.Users.Upsert(user)
@@ -49,6 +49,41 @@ func RegisterUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, t)
+}
+
+func GetUserInfo(c echo.Context) error {
+	userIdStr := c.Get("user").(*jwt.Token)
+	claims := userIdStr.Claims.(*JwtClaim)
+	userId, _ := primitive.ObjectIDFromHex(claims.UserId)
+
+	user, err := config.Repo.Users.Get(userId)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.JSON(http.StatusOK, user)
+}
+
+func UpdateUserInfo(c echo.Context) error {
+	userIdStr := c.Get("user").(*jwt.Token)
+	claims := userIdStr.Claims.(*JwtClaim)
+	userId, _ := primitive.ObjectIDFromHex(claims.UserId)
+	mobile := c.FormValue("mobile")
+	address := c.FormValue("address")
+
+	user, err := config.Repo.Users.Get(userId)
+	if err != nil {
+		panic(err)
+	}
+
+	user.Mobile = mobile
+	user.Address = address
+	updatedUser, err := config.Repo.Users.Upsert(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.JSON(http.StatusOK, updatedUser)
 }
 
 func LikeProduct(c echo.Context) error {

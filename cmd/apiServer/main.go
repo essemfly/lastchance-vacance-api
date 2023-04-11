@@ -54,6 +54,8 @@ func main() {
 	r.GET("/product/:id", routes.GetProduct)
 	r.GET("/products", routes.ListProducts)
 
+	r.GET("/user", routes.GetUserInfo)
+	r.PUT("/user", routes.UpdateUserInfo)
 	r.GET("/user/likes", routes.ListLikeProducts)
 	r.POST("/user/like", routes.LikeProduct)
 
