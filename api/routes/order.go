@@ -23,19 +23,16 @@ func ListOrders(c echo.Context) error {
 		panic(err)
 	}
 
-	orderWithProducts := []*domain.OrderWithProduct{}
+	pds := []*domain.Product{}
 	for _, order := range orders {
 		pd, err := config.Repo.Products.Get(order.ProductId)
 		if err != nil {
 			panic(err)
 		}
-		orderWithProducts = append(orderWithProducts, &domain.OrderWithProduct{
-			Order:   *order,
-			Product: *pd,
-		})
+		pds = append(pds, pd)
 	}
 
-	return c.JSON(http.StatusOK, orderWithProducts)
+	return c.JSON(http.StatusOK, pds)
 }
 
 func CreateOrder(c echo.Context) error {
