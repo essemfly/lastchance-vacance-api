@@ -138,7 +138,7 @@ func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, li
 	mongoFilter := bson.M{}
 
 	if filter.Keyword != "" {
-		mongoFilter["keyword"] = filter.Keyword
+		mongoFilter["keyword"] = bson.M{"$regex": filter.Keyword, "$options": "i"}
 	}
 
 	if filter.Status != domain.DANGGN_STATUS_ALL {
