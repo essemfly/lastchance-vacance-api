@@ -66,7 +66,7 @@ func updateCrawledProduct(pd *domain.CrawlProduct, newPd *domain.CrawlProduct) {
 }
 
 func screenCrawledProdduct(pd *domain.CrawlProduct) bool {
-	if pd.Keyword == "직구" {
+	if pd.Keyword == "직구" || pd.Keyword == "나눔" || pd.Keyword == "새제품" || pd.Keyword == "미개봉" {
 		return false
 	}
 	if strings.Contains(pd.Name, "닌텐도") {
