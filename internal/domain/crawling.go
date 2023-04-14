@@ -37,6 +37,7 @@ type CrawlKeyword struct {
 
 type CrawlProductFilter struct {
 	Keyword string
+	Title   string
 	Status  DanggnStatus
 }
 

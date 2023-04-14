@@ -18,6 +18,7 @@ func main() {
 
 	for {
 		crawlProductFilter := &domain.CrawlProductFilter{
+			Title:   "",
 			Keyword: "",
 			Status:  domain.DANGGN_STATUS_SALE,
 		}

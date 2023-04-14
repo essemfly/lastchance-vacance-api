@@ -137,8 +137,17 @@ func (repo *crawlProductRepo) List(filter *domain.CrawlProductFilter, offset, li
 
 	mongoFilter := bson.M{}
 
-	if filter.Keyword != "" {
-		mongoFilter["keyword"] = bson.M{"$regex": filter.Keyword, "$options": "i"}
+	if filter.Keyword == "rovers" {
+		mongoFilter["$or"] = []bson.M{
+			{"keyword": "직구"},
+			{"keyword": "나눔"},
+			{"keyword": "미개봉"},
+			{"keyword": "새제품"},
+		}
+	}
+
+	if filter.Title != "" {
+		mongoFilter["name"] = bson.M{"$regex": filter.Title, "$options": "i"}
 	}
 
 	if filter.Status != domain.DANGGN_STATUS_ALL {
