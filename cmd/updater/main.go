@@ -41,7 +41,7 @@ func main() {
 					continue
 				}
 				updateCrawledProduct(pd, updatedCrawlProduct)
-				if screenCrawledProdduct(pd) {
+				if pd.KeywordGroup == "handover" && screenCrawledProdduct(pd) {
 					product.AddProductInCrawled(pd)
 				}
 			}
@@ -67,7 +67,10 @@ func updateCrawledProduct(pd *domain.CrawlProduct, newPd *domain.CrawlProduct) {
 }
 
 func screenCrawledProdduct(pd *domain.CrawlProduct) bool {
-	if pd.Keyword == "직구" || pd.Keyword == "나눔" || pd.Keyword == "새제품" || pd.Keyword == "미개봉" {
+	if strings.Contains(pd.Name, "구매") {
+		return false
+	}
+	if strings.Contains(pd.Name, "포켓몬") {
 		return false
 	}
 	if strings.Contains(pd.Name, "닌텐도") {

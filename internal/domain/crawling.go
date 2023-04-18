@@ -28,6 +28,7 @@ type CrawlThread struct {
 type CrawlKeyword struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Keyword         string             `json:"keyword"`
+	KeywordGroup    string             `json:"keyword_group"`
 	IsAlive         bool               `json:"is_alive"`
 	RegisteredIndex int                `json:"registered_index"`
 	LastIndex       int                `json:"last_index"`
@@ -36,15 +37,17 @@ type CrawlKeyword struct {
 }
 
 type CrawlProductFilter struct {
-	Keyword string
-	Title   string
-	Status  DanggnStatus
+	Keyword      string
+	KeywordGroup string
+	Title        string
+	Status       DanggnStatus
 }
 
 type CrawlProduct struct {
 	ID                primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	DanggnIndex       string             `json:"danggn_index"`
 	Keyword           string             `json:"keyword"`
+	KeywordGroup      string             `json:"keyword_group"`
 	Name              string             `json:"name"`
 	Description       string             `json:"description"`
 	Price             int                `json:"price"`

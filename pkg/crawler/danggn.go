@@ -160,6 +160,7 @@ func addProductKeywords(product *domain.CrawlProduct, keywords []*domain.CrawlKe
 	for _, keyword := range keywords {
 		if strings.Contains(product.Name, keyword.Keyword) {
 			product.Keyword = keyword.Keyword
+			product.KeywordGroup = keyword.KeywordGroup
 			pds = append(pds, product)
 		}
 	}
