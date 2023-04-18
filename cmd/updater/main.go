@@ -49,7 +49,7 @@ func main() {
 			offset += limit
 		}
 
-		time.Sleep(3 * time.Minute)
+		time.Sleep(15 * time.Minute)
 	}
 }
 
