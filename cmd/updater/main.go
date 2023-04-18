@@ -16,40 +16,38 @@ import (
 func main() {
 	cmd.InitBase()
 
-	for {
-		crawlProductFilter := &domain.CrawlProductFilter{
-			Title:        "",
-			Keyword:      "",
-			KeywordGroup: "handover",
-			Status:       domain.DANGGN_STATUS_SALE,
-		}
-		offset, limit := 0, 1000
-		_, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+	config.Logger.Info("start updating danggn")
+
+	crawlProductFilter := &domain.CrawlProductFilter{
+		Title:        "",
+		Keyword:      "",
+		KeywordGroup: "handover",
+		Status:       domain.DANGGN_STATUS_SALE,
+	}
+	offset, limit := 0, 1000
+	_, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+	if err != nil {
+		config.Logger.Error("failed to list product", zap.Error(err))
+	}
+
+	for total > offset {
+		crawlPds, _, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
 		if err != nil {
 			config.Logger.Error("failed to list product", zap.Error(err))
 		}
-
-		for total > offset {
-			crawlPds, _, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
+		for _, pd := range crawlPds {
+			danggnIndex, _ := strconv.Atoi(pd.DanggnIndex)
+			updatedCrawlProduct, err := crawler.CrawlPage(danggnIndex)
 			if err != nil {
-				config.Logger.Error("failed to list product", zap.Error(err))
+				zap.Error(err)
+				continue
 			}
-			for _, pd := range crawlPds {
-				danggnIndex, _ := strconv.Atoi(pd.DanggnIndex)
-				updatedCrawlProduct, err := crawler.CrawlPage(danggnIndex)
-				if err != nil {
-					zap.Error(err)
-					continue
-				}
-				updateCrawledProduct(pd, updatedCrawlProduct)
-				if pd.KeywordGroup == "handover" && screenCrawledProdduct(pd) {
-					product.AddProductInCrawled(pd)
-				}
+			updateCrawledProduct(pd, updatedCrawlProduct)
+			if pd.KeywordGroup == "handover" && screenCrawledProdduct(pd) {
+				product.AddProductInCrawled(pd)
 			}
-			offset += limit
 		}
-
-		time.Sleep(15 * time.Minute)
+		offset += limit
 	}
 }
 
