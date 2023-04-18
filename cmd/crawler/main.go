@@ -1,14 +1,15 @@
 package main
 
 import (
+	"log"
+
 	"github.com/1000king/handover/cmd"
-	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/pkg/crawler"
 )
 
 func main() {
 	cmd.InitBase()
 
-	config.Logger.Info("start crawling danggn")
+	log.Println("start crawling danggn")
 	crawler.DanggnCrawler()
 }

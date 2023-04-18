@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -16,7 +17,7 @@ import (
 func main() {
 	cmd.InitBase()
 
-	config.Logger.Info("start updating danggn")
+	log.Println("start updating danggn")
 
 	crawlProductFilter := &domain.CrawlProductFilter{
 		Title:        "",
