@@ -18,9 +18,10 @@ func main() {
 
 	for {
 		crawlProductFilter := &domain.CrawlProductFilter{
-			Title:   "",
-			Keyword: "",
-			Status:  domain.DANGGN_STATUS_SALE,
+			Title:        "",
+			Keyword:      "",
+			KeywordGroup: "handover",
+			Status:       domain.DANGGN_STATUS_SALE,
 		}
 		offset, limit := 0, 1000
 		_, total, err := config.Repo.CrawlProducts.List(crawlProductFilter, offset, limit)
