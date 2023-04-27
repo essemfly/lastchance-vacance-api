@@ -85,8 +85,6 @@ func CrawlPage(index int) (*domain.CrawlProduct, error) {
 		availability := e.ChildAttr("meta[name='product:availability']", "content")
 		if availability == "oos" {
 			newProduct.Status = domain.DANGGN_STATUS_SOLDOUT
-		} else if availability == "instock" {
-			newProduct.Status = domain.DANGGN_STATUS_SALE
 		} else {
 			newProduct.Status = domain.DANGGN_STATUS_UNKNOWN
 		}
