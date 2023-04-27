@@ -11,7 +11,7 @@ import (
 
 const (
 	chunkSize        = 500
-	numWorkers       = 5
+	numWorkers       = 12
 	GlobalStartIndex = 534700000 // 2023-02-14 17:00:00
 	// 533830000 : 2023-02-13 04:00:00
 	// 533500000 : 2023-02-12 16:00:00
