@@ -86,7 +86,7 @@ func CrawlPage(index int) (*domain.CrawlProduct, error) {
 		if availability == "oos" {
 			newProduct.Status = domain.DANGGN_STATUS_SOLDOUT
 		} else {
-			newProduct.Status = domain.DANGGN_STATUS_UNKNOWN
+			newProduct.Status = domain.DANGGN_STATUS_SALE
 		}
 
 		regionName := e.ChildAttr("meta[name='twitter:data2']", "content")
