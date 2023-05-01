@@ -14,7 +14,7 @@ type AddProductRequest struct {
 	Outlink         string   `json:"outlink"`
 }
 
-func AddProductInCrawled(crawlPd *domain.CrawlProduct) (*domain.Product, error) {
+func UpsertProductInCrawled(crawlPd *domain.CrawlProduct) (*domain.Product, error) {
 	statusMatching := map[domain.DanggnStatus]domain.ProductStatus{
 		domain.DANGGN_STATUS_SALE:    domain.PRODUCT_STATUS_SALE,
 		domain.DANGGN_STATUS_SOLDOUT: domain.PRODUCT_STATUS_SOLDOUT,
@@ -45,7 +45,10 @@ func AddProductInCrawled(crawlPd *domain.CrawlProduct) (*domain.Product, error) 
 
 	pd, err := config.Repo.Products.GetByCrawlID(crawlPd.ID)
 	if err != nil {
-		return config.Repo.Products.Insert(newPd)
+		newPd, _ := config.Repo.Products.Insert(newPd)
+		AddKeywordProduct(newPd)
+		return newPd, nil
+
 	}
 
 	newPd.ID = pd.ID

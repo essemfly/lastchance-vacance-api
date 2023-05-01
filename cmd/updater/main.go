@@ -45,9 +45,9 @@ func main() {
 			}
 			updateCrawledProduct(pd, updatedCrawlProduct)
 			if pd.KeywordGroup == "handover" && screenCrawledProdduct(pd) {
-				newPd, err := product.AddProductInCrawled(pd)
-				if err == nil {
-					product.AddKeywordProduct(newPd)
+				_, err := product.AddProductInCrawled(pd)
+				if err != nil {
+					log.Println("failed to add product in crawled", err)
 				}
 			}
 		}
