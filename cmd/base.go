@@ -6,6 +6,7 @@ import (
 
 func InitBase() {
 	config.InitLogger()
+	config.InitSlack()
 	config.InitViper()
 	config.InitRegisterRepo()
 	config.InitNotification()

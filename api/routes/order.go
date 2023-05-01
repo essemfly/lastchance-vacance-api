@@ -56,6 +56,7 @@ func CreateOrder(c echo.Context) error {
 	if err != nil {
 		panic(err)
 	}
+	config.SendOrderCreateMessage(mobile, userId.Hex(), pd.ID.Hex(), pd.Outlink)
 
 	return c.JSON(http.StatusOK, newOrder)
 }
