@@ -6,6 +6,7 @@ import (
 
 	"github.com/1000king/handover/config"
 	"github.com/1000king/handover/internal/domain"
+	"github.com/1000king/handover/pkg/push"
 )
 
 func AddKeywordProduct(pd *domain.Product) {
@@ -19,12 +20,15 @@ func AddKeywordProduct(pd *domain.Product) {
 		if strings.Contains(pd.Name, keyword.Keyword) {
 			config.Repo.KeywordProducts.Insert(pd, keyword.UserID.Hex(), keyword.Keyword)
 			user, _ := config.Repo.Users.Get(keyword.UserID)
-			AddNewProductNotification(pd, keyword.Keyword, user)
+			newNoti, err := AddNewProductNotification(pd, keyword.Keyword, user)
+			if err != nil {
+				push.SendNotification(newNoti)
+			}
 		}
 	}
 }
 
-func AddNewProductNotification(pd *domain.Product, keyword string, user *domain.User) {
+func AddNewProductNotification(pd *domain.Product, keyword string, user *domain.User) (*domain.Notification, error) {
 	newNotification := &domain.Notification{
 		Status:           domain.NOTIFICATION_READY,
 		NotificationType: domain.NOTIFICATION_NEW_PRODUCT_NOTIFICATION,
@@ -38,5 +42,5 @@ func AddNewProductNotification(pd *domain.Product, keyword string, user *domain.
 		NumUsersPushed: 1,
 		NumUsersFailed: 0,
 	}
-	config.Repo.Notifications.Insert(newNotification)
+	return config.Repo.Notifications.Insert(newNotification)
 }
