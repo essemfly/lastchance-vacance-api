@@ -28,15 +28,20 @@ func RegisterUser(c echo.Context) error {
 		Address:    "",
 	}
 
-	newUser, err := config.Repo.Users.Upsert(user)
+	prevUser, err := config.Repo.Users.GetByDeviceUUID(deviceUUID)
 	if err != nil {
-		panic(err)
+		prevUser, err = config.Repo.Users.Insert(user)
+	} else {
+		_, err := config.Repo.Users.Upsert(prevUser)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	claims := &JwtClaim{
 		Sub:      viper.GetString("API_TOKEN_SUB"),
-		UserId:   newUser.ID.Hex(),
-		DeviceId: newUser.DeviceUUID,
+		UserId:   prevUser.ID.Hex(),
+		DeviceId: prevUser.DeviceUUID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},

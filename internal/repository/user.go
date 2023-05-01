@@ -7,6 +7,8 @@ import (
 
 type UsersRepository interface {
 	Get(ID primitive.ObjectID) (*domain.User, error)
+	GetByDeviceUUID(deviceUUID string) (*domain.User, error)
+	Insert(*domain.User) (*domain.User, error)
 	Upsert(*domain.User) (*domain.User, error)
 }
 

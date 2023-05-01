@@ -29,28 +29,44 @@ func (repo *userRepo) Get(ID primitive.ObjectID) (*domain.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
 
+func (repo *userRepo) GetByDeviceUUID(deviceUUID string) (*domain.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	mongoFilter := bson.M{
+		"deviceuuid": deviceUUID,
+	}
+
+	var user *domain.User
+	if err := repo.col.FindOne(ctx, mongoFilter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return user, nil
+
+}
+
+func (repo *userRepo) Insert(user *domain.User) (*domain.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	user.ID = primitive.NewObjectID()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
+	if _, err := repo.col.InsertOne(ctx, user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (repo *userRepo) Upsert(user *domain.User) (*domain.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	var prevUser *domain.User
-	err := repo.col.FindOne(ctx, bson.M{"deviceuuid": user.DeviceUUID}).Decode(&prevUser)
-	if err != nil {
-		if err != mongo.ErrNoDocuments {
-			return nil, err
-		}
-		user.ID = primitive.NewObjectID()
-		user.CreatedAt = time.Now()
-	} else {
-		user.Mobile = prevUser.Mobile
-		user.Address = prevUser.Address
-	}
-
 	user.UpdatedAt = time.Now()
-
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"deviceuuid": user.DeviceUUID}
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": user}, opts); err != nil {
