@@ -21,7 +21,7 @@ func AddKeywordProduct(pd *domain.Product) {
 			config.Repo.KeywordProducts.Insert(pd, keyword.UserID.Hex(), keyword.Keyword)
 			user, _ := config.Repo.Users.Get(keyword.UserID)
 			newNoti, err := AddNewProductNotification(pd, keyword.Keyword, user)
-			if err != nil {
+			if err == nil {
 				push.SendNotification(newNoti)
 			}
 		}

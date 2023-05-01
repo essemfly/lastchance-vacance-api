@@ -30,7 +30,7 @@ func RegisterUser(c echo.Context) error {
 
 	prevUser, err := config.Repo.Users.GetByDeviceUUID(deviceUUID)
 	if err != nil {
-		prevUser, err = config.Repo.Users.Insert(user)
+		prevUser, _ = config.Repo.Users.Insert(user)
 	} else {
 		_, err := config.Repo.Users.Upsert(prevUser)
 		if err != nil {
