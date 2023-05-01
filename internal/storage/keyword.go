@@ -17,6 +17,28 @@ type keywordRepo struct {
 }
 
 // List implements repository.KeywordsRepository
+func (repo *keywordRepo) ListAll() ([]*domain.Keyword, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"islive": true,
+	}
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var keywords []*domain.Keyword
+	err = cursor.All(ctx, &keywords)
+	if err != nil {
+		return nil, err
+	}
+	return keywords, nil
+}
+
+// List implements repository.KeywordsRepository
 func (repo *keywordRepo) List(userID string) ([]*domain.Keyword, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

@@ -45,7 +45,10 @@ func main() {
 			}
 			updateCrawledProduct(pd, updatedCrawlProduct)
 			if pd.KeywordGroup == "handover" && screenCrawledProdduct(pd) {
-				product.AddProductInCrawled(pd)
+				newPd, err := product.AddProductInCrawled(pd)
+				if err == nil {
+					product.AddKeywordProduct(newPd)
+				}
 			}
 		}
 		offset += limit

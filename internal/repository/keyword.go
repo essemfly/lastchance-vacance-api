@@ -9,6 +9,7 @@ type KeywordsRepository interface {
 	Insert(*domain.Keyword) (*domain.Keyword, error)
 	Update(*domain.Keyword) (*domain.Keyword, error)
 	List(userID string) ([]*domain.Keyword, error)
+	ListAll() ([]*domain.Keyword, error)
 }
 
 type KeywordProductsRepository interface {
