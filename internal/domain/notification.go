@@ -17,7 +17,6 @@ type NotificationStatus string
 
 const (
 	NOTIFICATION_READY     = NotificationStatus("READY")
-	NOTIFICATION_IN_QUEUE  = NotificationStatus("IN_QUEUE")
 	NOTIFICATION_CANCELED  = NotificationStatus("CANCELED")
 	NOTIFICATION_SUCCEEDED = NotificationStatus("SUCCEEDED")
 	NOTIFICATION_FAILED    = NotificationStatus("FAILED")
