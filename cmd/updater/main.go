@@ -94,6 +94,12 @@ func screenCrawledProdduct(pd *domain.CrawlProduct) bool {
 	if strings.Contains(pd.Name, "삽니다") {
 		return false
 	}
+	if strings.Contains(pd.Name, "사요") {
+		return false
+	}
+	if strings.Contains(pd.Name, "펜션화") {
+		return false
+	}
 	if strings.Contains(pd.Name, "구합니다") {
 		return false
 	}
