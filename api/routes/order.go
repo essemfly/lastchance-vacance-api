@@ -41,14 +41,16 @@ func CreateOrder(c echo.Context) error {
 	userId, _ := primitive.ObjectIDFromHex(claims.UserId)
 	pdIdStr := c.FormValue("productid")
 	pdId, _ := primitive.ObjectIDFromHex(pdIdStr)
+	rewardPrice := c.FormValue("rewardprice")
 	mobile := c.FormValue("mobile")
 
 	pd, _ := config.Repo.Products.Get(pdId)
 	order := &domain.Order{
-		Product:   pd,
-		ProductId: pdId,
-		UserId:    userId,
-		Mobile:    mobile,
+		Product:     pd,
+		ProductId:   pdId,
+		UserId:      userId,
+		Mobile:      mobile,
+		RewardPrice: rewardPrice,
 	}
 
 	// TODO: 이 product가 order를 insert할 수 있는지 확인할 필요가 있음
@@ -56,7 +58,7 @@ func CreateOrder(c echo.Context) error {
 	if err != nil {
 		panic(err)
 	}
-	config.SendOrderCreateMessage(mobile, userId.Hex(), pd.ID.Hex(), pd.Outlink)
+	config.SendOrderCreateMessage(mobile, userId.Hex(), pd.ID.Hex(), rewardPrice, pd.Outlink)
 
 	return c.JSON(http.StatusOK, newOrder)
 }

@@ -30,6 +30,6 @@ func SendSlackMessage(message string) {
 	}
 }
 
-func SendOrderCreateMessage(mobile, userId, productID, productUrl string) {
-	SendSlackMessage("[Order Create] Mobile: " + mobile + ", UserID: " + userId + ", ProductID: " + productID + ", ProductUrl: " + productUrl)
+func SendOrderCreateMessage(mobile, userId, productID, rewardPrice, productUrl string) {
+	SendSlackMessage("[Order Create] Mobile: " + mobile + "RewardPrice: " + rewardPrice + ", UserID: " + userId + ", ProductID: " + productID + ", ProductUrl: " + productUrl)
 }
